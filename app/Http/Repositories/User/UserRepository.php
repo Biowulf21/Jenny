@@ -39,5 +39,6 @@ class UserRepository implements UserRepositoryInterface{
         }
 
         throw new InvalidCredentialException;
+        // try this: return redirect('login')->withSuccess('Sorry! You have entered invalid credentials'); --> leads to seemingly infinite request
     }
 }
