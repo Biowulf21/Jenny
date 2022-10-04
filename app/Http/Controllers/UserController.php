@@ -26,13 +26,6 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        Log::info($request->all());
-        $status = $this->repository->authenticateUser($request->all());
-        if($status)
-        {
-            return "Login successful!";
-        }
-
-        return "Login invalid!";
+        return $this->repository->authenticateUser($request->all());       
     }
 }

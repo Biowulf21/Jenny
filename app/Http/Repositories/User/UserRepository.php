@@ -5,7 +5,9 @@ namespace App\Http\Repositories\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
+use App\Http\Resources\AuthenticatedUserResource as AuthenticatedUser;
 use App\Models\User;
 
 class UserRepository implements UserRepositoryInterface{
@@ -23,14 +25,14 @@ class UserRepository implements UserRepositoryInterface{
         ]);
 
         if ($validator->fails()) {
-            return false;
         }
 
         $validated = $validator->validated();
 
         if (Auth::attempt($validated)) {
             $user = Auth::user();
-            return true;
+            return new AuthenticatedUser($user, $user->createToken('authToken')->plainTextToken);
         }
+
     }
 }
