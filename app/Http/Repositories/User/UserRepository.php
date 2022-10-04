@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 use App\Http\Resources\AuthenticatedUserResource as AuthenticatedUser;
+use App\Exceptions\InvalidCredentialException;
 use App\Models\User;
 
 class UserRepository implements UserRepositoryInterface{
@@ -27,7 +28,7 @@ class UserRepository implements UserRepositoryInterface{
         );
 
         if ($validator->fails()) {
-            return redirect('dashboard')->withErrors($validator);
+            return redirect('dashboard')->withErrors("Validator failed!");
         }
 
         $validated = $validator->validated();
@@ -37,5 +38,6 @@ class UserRepository implements UserRepositoryInterface{
             return new AuthenticatedUser($user, $user->createToken('authToken')->plainTextToken);
         }
 
+        throw new InvalidCredentialException;
     }
 }
