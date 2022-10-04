@@ -19,12 +19,15 @@ class UserRepository implements UserRepositoryInterface{
 
     public function authenticateUser(array $data)
     {
-        $validator = Validator::make($data, [
-            'email' => 'required',
-            'password' => 'required',
-        ]);
+        $validator = Validator::make($data, 
+            [
+                'email' => 'required',
+                'password' => 'required',
+            ], 
+        );
 
         if ($validator->fails()) {
+            return redirect('dashboard')->withErrors($validator);
         }
 
         $validated = $validator->validated();
