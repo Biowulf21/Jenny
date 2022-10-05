@@ -21,6 +21,7 @@ Route::controller(UserController::class)->group(function() {
 	Route::get('/index', 'index')->name('index');
 	Route::post('/login', 'login')->name('login');
 });
+
 Route::resource('admin', AdminController::class);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

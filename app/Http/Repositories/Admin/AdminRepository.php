@@ -11,7 +11,6 @@ use App\Models\User;
 
 class AdminRepository implements AdminRepositoryInterface
 {
-
    public function createAdminUser(array $data)
    {
         $validator = Validator::make($data, 
@@ -19,7 +18,7 @@ class AdminRepository implements AdminRepositoryInterface
                'name' => 'required|string', 
                'email' => 'required|email|unique:users,email', 
                'password' => 'required|string|min:8',
-               'password_confirmation' => 'required|string',
+               'password_confirmation' => 'required|string|same:password',
             ]
          );
 
@@ -30,6 +29,9 @@ class AdminRepository implements AdminRepositoryInterface
 
          $validated = $validator->validated();
 
-         return $validated;
+         $validated['role'] = 'admin'; 
+         $validated['password'] = Hash::make($validated['password']);
+
+         return User::create($validated);
    }
 }
