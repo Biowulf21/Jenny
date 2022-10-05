@@ -67,4 +67,9 @@ class UserRepository implements UserRepositoryInterface{
 
         return User::create($validated);
     }
+
+    public function createApplicantUser(array $data)
+    {
+        return $this->createUser($data, 'applicant');
+    }
 }
