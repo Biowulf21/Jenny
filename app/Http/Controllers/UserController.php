@@ -28,4 +28,9 @@ class UserController extends Controller
     {
         return $this->repository->authenticateUser($request->all());       
     }
+
+    public function createApplicant(Request $request)
+    {
+        return $this->repository->createApplicantUser($request->all());
+    }
 }

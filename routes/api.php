@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ApplicantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,13 +17,20 @@ use App\Http\Controllers\UserController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('/', function () {
-    return view('welcome')->name('dashboard');
-});
 
 Route::controller(UserController::class)->group(function() {
 	Route::get('/index', 'index')->name('index');
 	Route::post('/login', 'login')->name('login');
+	Route::post('/register', 'createApplicant')->name('register');
+});
+
+Route::group(['middleware' => ['auth:sanctum']], function (){
+
+	Route::group(['middleware' => ['role:admin']], function () {
+		Route::resource('admin', AdminController::class);
+	});
+
+	// applicant
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
