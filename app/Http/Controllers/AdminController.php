@@ -43,9 +43,9 @@ class AdminController extends Controller
      * @param  App\Http\Requests\UserRequest as $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UserRequest $request)
+    public function store(Request $request)
     {
-        return $this->repository->createAdminUser($request);
+        return $this->repository->createAdminUser($request->all());
     }
 
     /**
