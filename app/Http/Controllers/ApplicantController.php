@@ -4,8 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Http\Repositories\Applicant\ApplicantRepositoryInterface;
+
 class ApplicantController extends Controller
 {
+    private $repostory; 
+    public function __construct(ApplicantRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -34,7 +42,7 @@ class ApplicantController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $this->repository->createApplicantUser($request->all());
     }
 
     /**
