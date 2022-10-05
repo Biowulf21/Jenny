@@ -7,4 +7,5 @@ use Illuminate\Http\Request;
 interface UserRepositoryInterface {
     public function getAllUsers();
     public function authenticateUser(array $data);
+    public function createUser(array $data, string $role);
 }
