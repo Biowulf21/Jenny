@@ -9,4 +9,5 @@ use App\Models\Question;
 interface QuestionRepositoryInterface 
 {
     public function createQuestion(array $data): Question;
+    public function deleteQuestion(int $id): void;
 }

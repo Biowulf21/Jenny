@@ -87,6 +87,6 @@ class QuestionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return $this->repository->deleteQuestion($id);
     }
 }
