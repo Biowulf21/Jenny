@@ -2,6 +2,7 @@
 
 namespace App\Http\Repositories\Exam;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 

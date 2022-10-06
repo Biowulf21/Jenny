@@ -2,7 +2,10 @@
 
 namespace App\Http\Repositories\Exam;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+
+use App\Models\Exam;
 
 interface ExamRepositoryInterface {
     public function createExam(array $data): Exam;
