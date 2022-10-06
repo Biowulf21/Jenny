@@ -21,7 +21,7 @@ class ExamController extends Controller
      */
     public function index()
     {
-        //
+        return $this->repository->showAllExams();
     }
 
     /**
@@ -53,7 +53,7 @@ class ExamController extends Controller
      */
     public function show($id)
     {
-        //
+        return $this->repository->showSingleExam($id);
     }
 
     /**

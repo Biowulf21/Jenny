@@ -35,4 +35,14 @@ class ExamRepository implements ExamRepositoryInterface
         Exam::findOrFail($id)->delete();
    }
 
+   public function showAllExams(): Collection
+   {
+        return Exam::orderBy('created_at', 'asc')->get();
+   }
+
+   public function showSingleExam(int $id): Exam 
+   {
+        return Exam::where('id', $id)->firstOrFail();
+   }
+
 }
