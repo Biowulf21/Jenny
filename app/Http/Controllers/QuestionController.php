@@ -4,8 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Http\Repositories\Question\QuestionRepositoryInterface; 
+
 class QuestionController extends Controller
 {
+    private $repisitory; 
+    public function __construct(QuestionRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -34,7 +42,7 @@ class QuestionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $this->repository->createQuestion($request->all());
     }
 
     /**
