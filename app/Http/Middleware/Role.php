@@ -5,6 +5,10 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Log;
+
+use Auth;
+
 class Role
 {
     /**
@@ -14,19 +18,20 @@ class Role
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next, $role)
+    public function handle(Request $request, Closure $next, ...$roles)
     {
-        if(!auth::check()) 
+        if(!Auth::check()) 
         {
             abort(403);
         }
 
         $user = Auth::user();
-        if($user->role !== $role)
-        {
-            abort(403);
+        foreach($roles as $role) {
+            if($user->role === $role) {
+                return $next($request);
+            }               
         }
         
-        return $next($request);
+        abort(403);
     }
 }
