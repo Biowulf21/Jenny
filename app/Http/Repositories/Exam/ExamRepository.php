@@ -3,6 +3,7 @@
 namespace App\Http\Repositories\Exam;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 use App\Exceptions\ValidatorFailedException;
 use App\Models\Exam;
@@ -14,7 +15,7 @@ class ExamRepository implements ExamRepositoryInterface
    {
        $validator = Validator::make($data, 
             [
-                'name' => 'required|string|unique', 
+                'name' => 'required|string|unique:exams,name', 
                 'description' => 'nullable'
             ]
         );

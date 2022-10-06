@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ApplicantController;
 
 /*
@@ -28,6 +29,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 
 	Route::group(['middleware' => ['role:admin']], function () {
 		Route::resource('admin', AdminController::class);
+		Route::resource('exam', ExamController::class);
 	});
 
 	// applicant
