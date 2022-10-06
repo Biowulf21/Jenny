@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ApplicantController;
+use App\Http\Controllers\QuestionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 	Route::group(['middleware' => ['role:admin']], function () {
 		Route::resource('admin', AdminController::class);
 		Route::resource('exam', ExamController::class);
+		Route::resource('question', QuestionController::class);
 	});
 
 	Route::group(['middleware' => ['role:applicant']], function () {
