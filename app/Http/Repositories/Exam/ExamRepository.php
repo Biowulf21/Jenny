@@ -10,7 +10,7 @@ use App\Models\Exam;
 class ExamRepository implements ExamRepositoryInterface
 {
 
-   public function createExam(array $data)
+   public function createExam(array $data): Exam
    {
        $validator = Validator::make($data, 
             [
@@ -27,6 +27,11 @@ class ExamRepository implements ExamRepositoryInterface
         $validated = $validator->validated();
 
         return Exam::create($validated);
+   }
+
+   public function deleteExam(int $id): void
+   {
+        Exam::findOrFail($id)->delete();
    }
 
 }
