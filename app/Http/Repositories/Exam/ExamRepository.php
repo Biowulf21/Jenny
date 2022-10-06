@@ -2,7 +2,9 @@
 
 namespace App\Http\Repositories\Exam;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 use App\Exceptions\ValidatorFailedException;
 use App\Models\Exam;
@@ -14,7 +16,7 @@ class ExamRepository implements ExamRepositoryInterface
    {
        $validator = Validator::make($data, 
             [
-                'name' => 'required|string|unique', 
+                'name' => 'required|string|unique:exams,name', 
                 'description' => 'nullable'
             ]
         );
@@ -32,6 +34,16 @@ class ExamRepository implements ExamRepositoryInterface
    public function deleteExam(int $id): void
    {
         Exam::findOrFail($id)->delete();
+   }
+
+   public function showAllExams(): Collection
+   {
+        return Exam::orderBy('created_at', 'asc')->get();
+   }
+
+   public function showSingleExam(int $id): Exam 
+   {
+        return Exam::where('id', $id)->firstOrFail();
    }
 
 }
