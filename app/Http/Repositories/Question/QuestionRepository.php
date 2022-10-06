@@ -34,4 +34,9 @@ class QuestionRepository implements QuestionRepositoryInterface
 
     }
 
+    public function deleteQuestion(int $id): void
+    {
+        Question::findOrFail($id)->delete();
+    }
+
 }
