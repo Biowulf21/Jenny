@@ -32,9 +32,10 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 		Route::resource('admin', AdminController::class);
 		Route::resource('exam', ExamController::class);
 		Route::resource('question', QuestionController::class);
+		Route::get('/question/all/{exam_id}', [QuestionController::class, 'showQuestionByExam']);
 	});
 
-	Route::group(['middleware' => ['role:applicant']], function () {
+	Route::group(['middleware' => ['role:applicant,admin']], function () {
 		Route::resource('exam', ExamController::class)->only('index', 'show');
 	});
 });
