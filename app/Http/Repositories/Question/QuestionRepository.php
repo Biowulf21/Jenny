@@ -18,8 +18,8 @@ class QuestionRepository implements QuestionRepositoryInterface
                 'exam_id' => 'required', 
                 'type' => 'required|in:radio,single,paragraph',
                 'problem' => 'required',
-                'options' => 'nullable|array',
-                'answer' => 'nullable|required_if:type,radio',
+                'options' => 'nullable|array|required_if:type,radio',
+                'answer' => 'nullable|required_unless:type,paragraph',
             ]
         );
 
