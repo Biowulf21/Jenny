@@ -17,7 +17,7 @@ class QuestionRepository implements QuestionRepositoryInterface
         return Question::create($validated);
     }
 
-    public function editQuestion(array $data, int $id)
+    public function editQuestion(array $data, int $id): Question
     {
         $validator = [];
         $keys = ['exam_id', 'type', 'problem', 'options', 'answer'];
@@ -34,6 +34,16 @@ class QuestionRepository implements QuestionRepositoryInterface
     public function deleteQuestion(int $id): void
     {
         Question::findOrFail($id)->delete();
+    }
+
+    public function showAllQuestions(int $exam_id): Collection
+    {
+         return Question::where('exam_id', $exam_id)->orderBy('created_at', 'asc')->get();
+    }
+ 
+    public function showSingleQuestion(int $id): Question
+    {
+         return Question::where('id', $id)->firstOrFail();
     }
 
     private function validateQuestion(array $data)

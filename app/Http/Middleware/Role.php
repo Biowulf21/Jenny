@@ -29,7 +29,7 @@ class Role
         foreach($roles as $role) {
             if($user->role === $role) {
                 return $next($request);
-            }               
+            } 
         }
         
         abort(403);
