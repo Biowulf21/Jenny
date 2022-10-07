@@ -38,7 +38,3 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 		Route::resource('exam', ExamController::class)->only('index', 'show');
 	});
 });
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
