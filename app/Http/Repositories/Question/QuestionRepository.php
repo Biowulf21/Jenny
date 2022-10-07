@@ -17,6 +17,20 @@ class QuestionRepository implements QuestionRepositoryInterface
         return Question::create($validated);
     }
 
+    public function editQuestion(array $data, int $id)
+    {
+        $validator = [];
+        $keys = ['exam_id', 'type', 'problem', 'options', 'answer'];
+        foreach($keys as $key) {
+            (array_key_exists($key, $data)) ? $validator[$key] = $data[$key] : $validator[$key] = NULL;
+        }
+
+        $validated = $this->validateQuestion($validator);
+
+        Question::where('id', $id)->update($validated);
+        return Question::find($id);
+    }
+
     public function deleteQuestion(int $id): void
     {
         Question::findOrFail($id)->delete();
@@ -29,8 +43,8 @@ class QuestionRepository implements QuestionRepositoryInterface
                 'exam_id' => 'required', 
                 'type' => 'required|in:radio,single,paragraph',
                 'problem' => 'required',
-                'options' => 'nullable|array|prohibited_unless:type,radio|required_if:type,radio',
-                'answer' => 'nullable|prohibited_if:type,paragraph|required_unless:type,paragraph',
+                'options' => 'nullable|prohibited_unless:type,radio|required_if:type,radio|array',
+                'answer' => 'nullable|prohibited_if:type,paragraph|required_unless:type,paragraph|string',
             ], 
         );
 
