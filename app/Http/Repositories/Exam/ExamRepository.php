@@ -23,7 +23,8 @@ class ExamRepository implements ExamRepositoryInterface
 
         if($validator->fails())
         {
-            throw new ValidatorFailedException('Failed creating exam', $validator->errors());
+          $error_message = $validator->errors()->all();
+          throw new ValidatorFailedException($error_message[0], $validator->errors());
         }
 
         $validated = $validator->validated();
