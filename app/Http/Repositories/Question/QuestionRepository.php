@@ -13,30 +13,48 @@ class QuestionRepository implements QuestionRepositoryInterface
 {
     public function createQuestion(array $data): Question
     {
-        $validator = Validator::make($data, 
-            [
-                'exam_id' => 'required', 
-                'type' => 'required|in:radio,single,paragraph',
-                'problem' => 'required',
-                'options' => 'nullable|array|required_if:type,radio',
-                'answer' => 'nullable|required_unless:type,paragraph',
-            ]
-        );
+        $validated = $this->validateQuestion($data);
+        return Question::create($validated);
+    }
 
-        if($validator->fails())
-        {
-            throw new ValidatorFailedException('Failed creating exam', $validator->errors());
+    public function editQuestion(array $data, int $id)
+    {
+        $validator = [];
+        $keys = ['exam_id', 'type', 'problem', 'options', 'answer'];
+        foreach($keys as $key) {
+            (array_key_exists($key, $data)) ? $validator[$key] = $data[$key] : $validator[$key] = NULL;
         }
 
-        $validated = $validator->validated();
+        $validated = $this->validateQuestion($validator);
 
-        return Question::create($validated);
-
+        Question::where('id', $id)->update($validated);
+        return Question::find($id);
     }
 
     public function deleteQuestion(int $id): void
     {
         Question::findOrFail($id)->delete();
+    }
+
+    private function validateQuestion(array $data)
+    {
+        $validator = Validator::make($data, 
+            [
+                'exam_id' => 'required', 
+                'type' => 'required|in:radio,single,paragraph',
+                'problem' => 'required',
+                'options' => 'nullable|prohibited_unless:type,radio|required_if:type,radio|array',
+                'answer' => 'nullable|prohibited_if:type,paragraph|required_unless:type,paragraph|string',
+            ], 
+        );
+
+        if($validator->fails())
+        {
+            $error_message = $validator->errors()->all();
+            throw new ValidatorFailedException($error_message[0], $validator->errors());
+        }
+
+        return $validator->validated();
     }
 
 }

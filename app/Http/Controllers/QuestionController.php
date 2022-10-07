@@ -76,7 +76,7 @@ class QuestionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        return $this->repository->editQuestion($request->all(), $id);
     }
 
     /**
