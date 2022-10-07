@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 use App\Http\Repositories\Question\QuestionRepositoryInterface; 
 
@@ -45,6 +46,18 @@ class QuestionController extends Controller
         return $this->repository->createQuestion($request->all());
     }
 
+    
+     /**
+     * Display a listing of the resource, grouped by their exam_id foreign key
+     * 
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showQuestionByExam(int $exam_id)
+    {
+        return $this->repository->showAllQuestions($exam_id);
+    }
+
     /**
      * Display the specified resource.
      *
@@ -53,7 +66,7 @@ class QuestionController extends Controller
      */
     public function show($id)
     {
-        //
+        return $this->repository->showSingleQuestion($id);
     }
 
     /**
