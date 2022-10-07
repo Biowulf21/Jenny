@@ -30,7 +30,8 @@ class UserRepository implements UserRepositoryInterface{
         );
 
         if ($validator->fails()) {
-            throw new  ValidatorFailedException('Failed to authenticate user', $validator->errors());
+            $error_message = $validator->errors()->all();
+            throw new  ValidatorFailedException($error_message[0], $validator->errors());
         }
 
         $validated = $validator->validated();
@@ -41,7 +42,6 @@ class UserRepository implements UserRepositoryInterface{
         }
 
         throw new InvalidCredentialException;
-        // try this: return redirect('login')->withSuccess('Sorry! You have entered invalid credentials'); --> leads to seemingly infinite request
     }
 
     public function createUser(array $data, string $role)
@@ -57,7 +57,8 @@ class UserRepository implements UserRepositoryInterface{
 
         if($validator->fails())
         {
-            throw new ValidatorFailedException('Failed creating the user', $validator->errors());
+            $error_message = $validator->errors()->all();
+            throw new ValidatorFailedException($error_message[0], $validator->errors());
         }
 
         $validated = $validator->validated();
