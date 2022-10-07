@@ -31,11 +31,12 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 	Route::group(['middleware' => ['role:admin']], function () {
 		Route::resource('admin', AdminController::class);
 		Route::resource('exam', ExamController::class);
-		Route::resource('question', QuestionController::class);
-		Route::get('/question/all/{exam_id}', [QuestionController::class, 'showQuestionByExam']);
+		Route::resource('question', QuestionController::class);		
 	});
 
 	Route::group(['middleware' => ['role:applicant,admin']], function () {
 		Route::resource('exam', ExamController::class)->only('index', 'show');
+		Route::resource('question', QuestionController::class)->only('show');
+		Route::get('/question/all/{exam_id}', [QuestionController::class, 'showQuestionByExam']);
 	});
 });
