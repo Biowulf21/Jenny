@@ -2,6 +2,7 @@
 
 namespace App\Http\Repositories\User;
 
+use Illuminate\Http\Response; 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -31,7 +32,7 @@ class UserRepository implements UserRepositoryInterface{
 
         if ($validator->fails()) {
             $error_message = $validator->errors()->all();
-            throw new  ValidatorFailedException($error_message[0], $validator->errors());
+            throw new ValidatorFailedException($error_message[0], $validator->errors());
         }
 
         $validated = $validator->validated();
@@ -46,27 +47,32 @@ class UserRepository implements UserRepositoryInterface{
 
     public function createUser(array $data, string $role)
     {
-        $validator = Validator::make($data, 
-            [
-                'name' => 'required|string', 
-                'email' => 'required|email|unique:users,email', 
-                'password' => 'required|string|min:8',
-                'password_confirmation' => 'required|string|same:password',
-            ]
-        );
+        try {
+            $validator = Validator::make($data, 
+                [
+                    'name' => 'required|string', 
+                    'email' => 'required|email|unique:users,email', 
+                    'password' => 'required|string|min:8',
+                    'password_confirmation' => 'required|string|same:password',
+                ]
+            );
 
-        if($validator->fails())
-        {
-            $error_message = $validator->errors()->all();
-            throw new ValidatorFailedException($error_message[0], $validator->errors());
+            if($validator->fails())
+            {
+                $error_message = $validator->errors()->all();
+                return response()->pass($error_message[0]);
+            }
+
+            $validated = $validator->validated();
+
+            $validated['role'] = $role; 
+            $validated['password'] = Hash::make($validated['password']);
+
+            return response()->pass('Successfully created ' . $role . ' user', User::create($validated));
+        } catch (Exception $e) { 
+            return response()->pass($e->getMessage);
         }
-
-        $validated = $validator->validated();
-
-        $validated['role'] = $role; 
-        $validated['password'] = Hash::make($validated['password']);
-
-        return User::create($validated);
+        
     }
 
     public function createApplicantUser(array $data)
