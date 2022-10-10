@@ -52,8 +52,8 @@ class ExamRepository implements ExamRepositoryInterface
    public function showAllExams()
    {
      try { 
-          $exams = Exam::orderBy('created_at', 'asc')->get();
-          $message = (!empty($exam)) ? "Successfully fetched all exams" : "There is no existing exam";
+          $exams = Exam::orderBy('created_at', 'asc')->paginate(10);
+          $message = (count($exams) !== 0) ? "Successfully fetched all exams" : "There is no existing exam";
 
           return response()->pass($message, $exams);
      } catch (Exception $e) {

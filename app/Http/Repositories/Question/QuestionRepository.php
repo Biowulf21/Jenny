@@ -61,13 +61,13 @@ class QuestionRepository implements QuestionRepositoryInterface
     {
         try { 
             if(Exam::find($exam_id)){
-                $questions = Question::where('exam_id', $exam_id)->orderBy('created_at', 'asc')->get();
+                $questions = Question::where('exam_id', $exam_id)->orderBy('created_at', 'asc')->paginate(10);
                 $message = (!empty($exam)) ? "Successfully fetched all questions in exam " . $exam_id : "There is no existing question in exam " . $exam_id;
     
                 return response()->pass($message, $questions);
             } else {
                 return response()->json([
-                    'message' => 'Exam ID does not exist and is not found',
+                    'message' => 'Exam ID does not exist and Exam is not found',
                     'data' => [],
                 ], 404);
             }           
