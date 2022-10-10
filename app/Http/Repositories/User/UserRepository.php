@@ -72,7 +72,7 @@ class UserRepository implements UserRepositoryInterface{
             $user = User::create($validated);
             return response()->pass('Successfully created ' . $role . ' user', $user);
         } catch (Exception $e) { 
-            return response()->pass($e->getMessage);
+            return response()->pass($e->getMessage());
         }
         
     }
