@@ -87,7 +87,7 @@ class ExamController extends Controller
      */
     public function destroy($id)
     {
-        $this->repository->deleteExam($id);
+        return $this->repository->deleteExam($id);
     }
     
 }

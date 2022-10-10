@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\Exam;
 
 interface ExamRepositoryInterface {
-    public function createExam(array $data): Exam;
-    public function deleteExam(int $id): void; 
-    public function showAllExams(): Collection; 
-    public function showSingleExam(int $id): Exam; 
+    public function createExam(array $data);
+    public function deleteExam(int $id);
+    public function showAllExams();
+    public function showSingleExam(int $id);
 }

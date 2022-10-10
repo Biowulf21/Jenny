@@ -12,39 +12,63 @@ use App\Models\Exam;
 class ExamRepository implements ExamRepositoryInterface
 {
 
-   public function createExam(array $data): Exam
+   public function createExam(array $data)
    {
-       $validator = Validator::make($data, 
-            [
-                'name' => 'required|string|unique:exams,name', 
-                'description' => 'nullable'
-            ]
-        );
+     try {
+          $validator = Validator::make($data, 
+               [
+                    'name' => 'required|string|unique:exams,name', 
+                    'description' => 'nullable'
+               ]
+          );
 
-        if($validator->fails())
-        {
-          $error_message = $validator->errors()->all();
-          throw new ValidatorFailedException($error_message[0], $validator->errors());
-        }
+          if($validator->fails())
+          {
+               $error_message = $validator->errors()->all();
+               throw new ValidatorFailedException($error_message[0], $validator->errors());
+          }
 
-        $validated = $validator->validated();
+          $validated = $validator->validated();
+          $exam = Exam::create($validated);
 
-        return Exam::create($validated);
+          return response()->pass('Successfully created exam', $exam);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage);
+     }
+       
    }
 
-   public function deleteExam(int $id): void
+   public function deleteExam(int $id)
    {
-        Exam::findOrFail($id)->delete();
+     try {
+          Exam::findOrFail($id)->delete();
+
+          return response()->pass('Successfully deleted exam');
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage);
+     }
    }
 
-   public function showAllExams(): Collection
+   public function showAllExams()
    {
-        return Exam::orderBy('created_at', 'asc')->get();
+     try { 
+          $exams = Exam::orderBy('created_at', 'asc')->get();
+          return response()->pass('Successfully fectched all exams', $exams);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage);
+     }
+
    }
 
-   public function showSingleExam(int $id): Exam 
+   public function showSingleExam(int $id)
    {
-        return Exam::where('id', $id)->firstOrFail();
+     try { 
+          $exam = Exam::where('id', $id)->firstOrFail();
+          return response()->pass('Successfully fetched exam ID ' . $id, $exam);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage);     
+     }
+
    }
 
 }

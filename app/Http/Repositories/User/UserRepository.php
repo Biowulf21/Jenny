@@ -39,7 +39,8 @@ class UserRepository implements UserRepositoryInterface{
 
         if (Auth::attempt($validated)) {
             $user = Auth::user();
-            return new AuthenticatedUser($user, $user->createToken('authToken')->plainTextToken);
+            $user = new AuthenticatedUser($user, $user->createToken('authToken')->plainTextToken);
+            return response()->pass('Authentication successful', $user);
         }
 
         throw new InvalidCredentialException;
@@ -60,7 +61,7 @@ class UserRepository implements UserRepositoryInterface{
             if($validator->fails())
             {
                 $error_message = $validator->errors()->all();
-                return response()->pass($error_message[0]);
+                throw new ValidatorFailedException($error_message[0], $validator->errors());
             }
 
             $validated = $validator->validated();
@@ -68,7 +69,8 @@ class UserRepository implements UserRepositoryInterface{
             $validated['role'] = $role; 
             $validated['password'] = Hash::make($validated['password']);
 
-            return response()->pass('Successfully created ' . $role . ' user', User::create($validated));
+            $user = User::create($validated);
+            return response()->pass('Successfully created ' . $role . ' user', $user);
         } catch (Exception $e) { 
             return response()->pass($e->getMessage);
         }
