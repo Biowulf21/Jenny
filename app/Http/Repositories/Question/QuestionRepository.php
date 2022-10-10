@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 use App\Exceptions\ValidatorFailedException;
 use App\Models\Question;
+use App\Models\Exam;
 
 class QuestionRepository implements QuestionRepositoryInterface
 {
@@ -59,9 +60,18 @@ class QuestionRepository implements QuestionRepositoryInterface
     public function showAllQuestions(int $exam_id)
     {
         try { 
-            $questions = Question::where('exam_id', $exam_id)->orderBy('created_at', 'asc')->get();
+            if(Exam::find($exam_id)){
+                $questions = Question::where('exam_id', $exam_id)->orderBy('created_at', 'asc')->get();
+                $message = (!empty($exam)) ? "Successfully fetched all questions in exam " . $exam_id : "There is no existing question in exam " . $exam_id;
+    
+                return response()->pass($message, $questions);
+            } else {
+                return response()->json([
+                    'message' => 'Exam ID does not exist and is not found',
+                    'data' => [],
+                ], 404);
+            }           
 
-            return response()->pass('Successfully fetched all questions', $questions);
         } catch (Exception $e) {
             return response()->pass($e->getMessage());
        }

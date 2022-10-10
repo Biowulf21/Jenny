@@ -53,7 +53,9 @@ class ExamRepository implements ExamRepositoryInterface
    {
      try { 
           $exams = Exam::orderBy('created_at', 'asc')->get();
-          return response()->pass('Successfully fectched all exams', $exams);
+          $message = (!empty($exam)) ? "Successfully fetched all exams" : "There is no existing exam";
+
+          return response()->pass($message, $exams);
      } catch (Exception $e) {
           return response()->pass($e->getMessage());
      }
