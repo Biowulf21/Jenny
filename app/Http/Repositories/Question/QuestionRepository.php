@@ -11,39 +11,74 @@ use App\Models\Question;
 
 class QuestionRepository implements QuestionRepositoryInterface
 {
-    public function createQuestion(array $data): Question
+    public function createQuestion(array $data)
     {
-        $validated = $this->validateQuestion($data);
-        return Question::create($validated);
-    }
-
-    public function editQuestion(array $data, int $id): Question
-    {
-        $validator = [];
-        $keys = ['exam_id', 'type', 'problem', 'options', 'answer'];
-        foreach($keys as $key) {
-            (array_key_exists($key, $data)) ? $validator[$key] = $data[$key] : $validator[$key] = NULL;
+        try {
+            $validated = $this->validateQuestion($data);
+            $question = Question::create($validated);
+            return response()->pass('Successfully created question', $question);
+        } catch (Exception $e) {
+            return response()->pass($e->getMessage);
         }
-
-        $validated = $this->validateQuestion($validator);
-
-        Question::where('id', $id)->update($validated);
-        return Question::find($id);
+        
     }
 
-    public function deleteQuestion(int $id): void
+    public function editQuestion(array $data, int $id)
     {
-        Question::findOrFail($id)->delete();
+        try {
+            $validator = [];
+            $keys = ['exam_id', 'type', 'problem', 'options', 'answer'];
+            foreach($keys as $key) {
+                (array_key_exists($key, $data)) ? $validator[$key] = $data[$key] : $validator[$key] = NULL;
+            }
+    
+            $validated = $this->validateQuestion($validator);
+            Question::where('id', $id)->update($validated);
+            $question = Question::find($id);
+    
+            return response()->pass('Successfully edited question ' . $id, $question);
+
+        } catch (Exception $e) {
+            return response()->pass($e->getMessage);
+        }
+       
     }
 
-    public function showAllQuestions(int $exam_id): Collection
+    public function deleteQuestion(int $id)
     {
-         return Question::where('exam_id', $exam_id)->orderBy('created_at', 'asc')->get();
+        try {
+            Question::findOrFail($id)->delete();
+  
+            return response()->pass('Successfully deleted question');
+       } catch (Exception $e) {
+            return response()->pass($e->getMessage);
+       }
+       
+    }
+
+    public function showAllQuestions(int $exam_id)
+    {
+        try { 
+            $questions = Question::where('exam_id', $exam_id)->orderBy('created_at', 'asc')->get();
+
+            return response()->pass('Successfully fetched all questions', $questions);
+        } catch (Exception $e) {
+            return response()->pass($e->getMessage);
+       }
+
     }
  
-    public function showSingleQuestion(int $id): Question
+    public function showSingleQuestion(int $id)
     {
-         return Question::where('id', $id)->firstOrFail();
+        try { 
+            $question = Question::where('id', $id)->firstOrFail();
+
+            return response()->pass('Successfully fetched question ' . $id, $question);
+        } catch (Exception $e) {
+            log::info($e->getMessage);
+            return response()->pass($e->getMessage);
+       }
+
     }
 
     private function validateQuestion(array $data)
