@@ -17,8 +17,8 @@ class ExamRepository implements ExamRepositoryInterface
      try {
           $validator = Validator::make($data, 
                [
-                    'name' => 'required|string|unique:exams,name', 
-                    'description' => 'nullable'
+                    'name' => 'required|string', 
+                    'description' => 'nullable|string'
                ]
           );
 
