@@ -15,7 +15,7 @@ class CreateExamsTable extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique()->required();
+            $table->string('name')->required();
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
