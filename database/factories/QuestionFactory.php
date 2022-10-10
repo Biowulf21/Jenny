@@ -16,15 +16,16 @@ class QuestionFactory extends Factory
     public function definition()
     {
         return [
-            'exam_id' => $this->faker->numberBetween(1, 3),     // Change the values here according to how many exams there is to be made in the seeder
+            'exam_id' => $this->faker->numberBetween(1, 10),     // Change the values here according to how many exams there is to be made in the seeder
             'type' => $this->faker->randomElement(['radio', 'single', 'paragraph']),
             'problem' => $this->faker->paragraph(),
             'options' => [
                 'A' => $this->faker->paragraph, 
                 'B' => $this->faker->paragraph, 
                 'C' => $this->faker->paragraph,
+                'D' => $this->faker->paragraph
             ],
-            'answer' => $this->faker->randomElement(['A', 'B', 'C']),
+            'answer' => $this->faker->randomElement(['A', 'B', 'C', 'D']),
         ];
     }
 }

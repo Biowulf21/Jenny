@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User; 
 use App\Models\Exam;
 use App\Models\Question;
+use App\Models\Position;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,7 +18,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         User::factory(5)->create();
-        Exam::factory(3)->create();
-        Question::factory(5)->create();
+        Position::factory(5)->create();
+        Exam::factory(10)->create();
+        Question::factory(25)->create();
     }
 }
