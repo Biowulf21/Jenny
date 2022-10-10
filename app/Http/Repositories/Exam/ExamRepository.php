@@ -33,7 +33,7 @@ class ExamRepository implements ExamRepositoryInterface
 
           return response()->pass('Successfully created exam', $exam);
      } catch (Exception $e) {
-          return response()->pass($e->getMessage);
+          return response()->pass($e->getMessage());
      }
        
    }
@@ -45,7 +45,7 @@ class ExamRepository implements ExamRepositoryInterface
 
           return response()->pass('Successfully deleted exam');
      } catch (Exception $e) {
-          return response()->pass($e->getMessage);
+          return response()->pass($e->getMessage());
      }
    }
 
@@ -55,7 +55,7 @@ class ExamRepository implements ExamRepositoryInterface
           $exams = Exam::orderBy('created_at', 'asc')->get();
           return response()->pass('Successfully fectched all exams', $exams);
      } catch (Exception $e) {
-          return response()->pass($e->getMessage);
+          return response()->pass($e->getMessage());
      }
 
    }
@@ -66,7 +66,7 @@ class ExamRepository implements ExamRepositoryInterface
           $exam = Exam::where('id', $id)->firstOrFail();
           return response()->pass('Successfully fetched exam ID ' . $id, $exam);
      } catch (Exception $e) {
-          return response()->pass($e->getMessage);     
+          return response()->pass($e->getMessage());     
      }
 
    }

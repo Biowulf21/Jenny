@@ -18,7 +18,7 @@ class QuestionRepository implements QuestionRepositoryInterface
             $question = Question::create($validated);
             return response()->pass('Successfully created question', $question);
         } catch (Exception $e) {
-            return response()->pass($e->getMessage);
+            return response()->pass($e->getMessage());
         }
         
     }
@@ -39,7 +39,7 @@ class QuestionRepository implements QuestionRepositoryInterface
             return response()->pass('Successfully edited question ' . $id, $question);
 
         } catch (Exception $e) {
-            return response()->pass($e->getMessage);
+            return response()->pass($e->getMessage());
         }
        
     }
@@ -51,7 +51,7 @@ class QuestionRepository implements QuestionRepositoryInterface
   
             return response()->pass('Successfully deleted question');
        } catch (Exception $e) {
-            return response()->pass($e->getMessage);
+            return response()->pass($e->getMessage());
        }
        
     }
@@ -63,7 +63,7 @@ class QuestionRepository implements QuestionRepositoryInterface
 
             return response()->pass('Successfully fetched all questions', $questions);
         } catch (Exception $e) {
-            return response()->pass($e->getMessage);
+            return response()->pass($e->getMessage());
        }
 
     }
@@ -76,7 +76,7 @@ class QuestionRepository implements QuestionRepositoryInterface
             return response()->pass('Successfully fetched question ' . $id, $question);
         } catch (Exception $e) {
             log::info($e->getMessage);
-            return response()->pass($e->getMessage);
+            return response()->pass($e->getMessage());
        }
 
     }
