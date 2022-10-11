@@ -72,6 +72,7 @@ class UserRepository implements UserRepositoryInterface{
             $validated['password'] = Hash::make($validated['password']);
 
             $user = User::create($validated);
+            ($role === 'applicant') ? $user = new AuthenticatedUser($user, $user->createToken('authToken')->plainTextToken) : $user;
             return response()->pass('Successfully created ' . $role . ' user', $user);
         } catch (Exception $e) { 
             return response()->pass($e->getMessage());
