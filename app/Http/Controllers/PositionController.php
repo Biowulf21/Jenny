@@ -88,7 +88,7 @@ class PositionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->repository->editPosition($request->all(), $id);
     }
 
     /**

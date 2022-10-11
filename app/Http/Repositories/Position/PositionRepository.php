@@ -35,6 +35,19 @@ class PositionRepository implements PositionRepositoryInterface
           }
     }
 
+    public function editPosition(array $data, int $id)
+    {
+          try {   
+               $validated = $this->validateQuestion($data);
+               Position::where('id', $id)->update($validated);
+               $position = Position::find($id);
+                    
+               return response()->pass('Successfully edited position', $position);
+          } catch (Exception $e) {
+               return response()->pass($e->getMessage());
+          }
+    }
+
     public function deletePosition(int $id)
     {
           try {
