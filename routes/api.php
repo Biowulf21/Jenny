@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\PositionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,7 @@ use App\Http\Controllers\QuestionController;
 |
 */
 
+Route::get('/position/all', [PositionController::class, 'getAll']);
 Route::controller(UserController::class)->group(function() {
 	Route::get('/index', 'index')->name('index');
 	Route::post('/login', 'login')->name('login');
