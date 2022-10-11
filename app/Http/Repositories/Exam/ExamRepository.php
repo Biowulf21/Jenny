@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 use App\Exceptions\ValidatorFailedException;
 use App\Models\Exam;
+use App\Models\Position;
 
 class ExamRepository implements ExamRepositoryInterface
 {
@@ -18,7 +19,8 @@ class ExamRepository implements ExamRepositoryInterface
           $validator = Validator::make($data, 
                [
                     'name' => 'required|string', 
-                    'description' => 'nullable|string'
+                    'description' => 'nullable|string',
+                    'for_position' => 'required'
                ]
           );
 
