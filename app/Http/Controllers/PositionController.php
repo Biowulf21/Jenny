@@ -54,7 +54,7 @@ class PositionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $this->repository->createPosition($request->all());
     }
 
     /**

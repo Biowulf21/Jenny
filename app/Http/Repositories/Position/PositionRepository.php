@@ -3,20 +3,51 @@
 namespace App\Http\Repositories\Position;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
+use App\Exceptions\ValidatorFailedException;
 use App\Models\Position; 
 
 class PositionRepository implements PositionRepositoryInterface
 {
     public function getAllPositions()
     {
-       try {   
-            $positions = Position::all();
-            
-            return response()->pass('Successfully fetched all positions', $positions);
-       } catch (Exception $e) {
-            return response()->pass($e->getMessage());
-       }
+          try {   
+               $positions = Position::all();
+               
+               return response()->pass('Successfully fetched all positions', $positions);
+          } catch (Exception $e) {
+               return response()->pass($e->getMessage());
+          }
+    }
+
+    public function createPosition(array $data)
+    {
+          try {   
+               $validated = $this->validatePosition($data);
+               $position = Position::create($validated);
+                    
+               return response()->pass('Successfully created position', $position);
+          } catch (Exception $e) {
+               return response()->pass($e->getMessage());
+          }
+    }
+
+    private function validatePosition(array $data)
+    {
+          $validator = Validator::make($data, 
+          [
+               'name' => 'required|string|unique:positions,name'
+          ], 
+          );
+
+          if($validator->fails())
+          {
+               $error_message = $validator->errors()->all();
+               throw new ValidatorFailedException($error_message[0], $validator->errors());
+          }
+
+          return $validator->validated();
     }
 
 }

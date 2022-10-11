@@ -6,4 +6,5 @@ use Illuminate\Http\Request;
 
 interface PositionRepositoryInterface {
     public function getAllPositions();
+    public function createPosition(array $data);
 }

@@ -33,7 +33,8 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 	Route::group(['middleware' => ['role:admin']], function () {
 		Route::resource('admin', AdminController::class);
 		Route::resource('exam', ExamController::class);
-		Route::resource('question', QuestionController::class);		
+		Route::resource('question', QuestionController::class);
+		Route::resource('position', PositionController::class);				
 	});
 
 	Route::group(['middleware' => ['role:applicant,admin']], function () {
