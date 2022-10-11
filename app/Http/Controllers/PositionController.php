@@ -99,6 +99,6 @@ class PositionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return $this->repository->deletePosition($id);
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Validator;
 
 use App\Exceptions\ValidatorFailedException;
 use App\Models\Position; 
+use App\Models\User;
+use App\Models\Exam;
 
 class PositionRepository implements PositionRepositoryInterface
 {
@@ -28,6 +30,28 @@ class PositionRepository implements PositionRepositoryInterface
                $position = Position::create($validated);
                     
                return response()->pass('Successfully created position', $position);
+          } catch (Exception $e) {
+               return response()->pass($e->getMessage());
+          }
+    }
+
+    public function deletePosition(int $id)
+    {
+          try {
+               $applicantsWith = User::where('for_position', $id)->count(); 
+               $examsWith = Exam::where('for_position', $id)->count();
+
+               if ($applicantsWith + $examsWith === 0)
+               {
+                    Position::findOrFail($id)->delete();
+                    return response()->pass('Successfully deleted position');
+               } else {
+                    return response()->json([
+                         'message' => 'Unable to delete position because an applicant or exam is using this reference',
+                         'data' => null,
+                     ], 502);
+               }
+               
           } catch (Exception $e) {
                return response()->pass($e->getMessage());
           }
