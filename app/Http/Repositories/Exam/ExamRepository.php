@@ -3,12 +3,14 @@
 namespace App\Http\Repositories\Exam;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 use App\Exceptions\ValidatorFailedException;
 use App\Models\Exam;
 use App\Models\Position;
+use App\Models\User;
 
 class ExamRepository implements ExamRepositoryInterface
 {
@@ -73,6 +75,17 @@ class ExamRepository implements ExamRepositoryInterface
           return response()->pass($e->getMessage());     
      }
 
+   }
+   
+   public function showApplicantExams()
+   {
+     try { 
+          $user = Auth::user();
+          $exams = Exam::where('for_position', $user->for_position)->paginate(10);
+          return response()->pass('Successfully fetched exams for applicant position', $exams);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());     
+     }
    }
 
 }

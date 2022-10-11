@@ -37,9 +37,13 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 		Route::resource('position', PositionController::class);				
 	});
 
-	Route::group(['middleware' => ['role:applicant,admin']], function () {
-		Route::resource('exam', ExamController::class)->only('index', 'show');
-		Route::resource('question', QuestionController::class)->only('show');
-		Route::get('/question/all/{exam_id}', [QuestionController::class, 'showQuestionByExam']);
-	});
+	Route::group(['middleware' => ['role:applicant']], function() {
+		Route::get('/applicant/exams', [ExamController::class, 'getApplicantExams']);
+	});	
+	
+	// Route::group(['middleware' => ['role:applicant,admin']], function () {
+	// 	Route::resource('exam', ExamController::class)->only('index', 'show');
+	// 	Route::resource('question', QuestionController::class)->only('show');
+	// 	Route::get('/question/all/{exam_id}', [QuestionController::class, 'showQuestionByExam']);
+	// });
 });
