@@ -66,13 +66,8 @@ class UserRepository implements UserRepositoryInterface{
                 throw new ValidatorFailedException($error_message[0], $validator->errors());
             }
 
-            if (!Position::find($data['for_position'])->exists())
-            {
-                response()->json(['message' => 'Position ID does not exists'], 502);
-            }
+            $validated = $validator->validated();      
 
-            $validated = $validator->validated();
-            
             $validated['role'] = $role;
             $validated['password'] = Hash::make($validated['password']);
 
