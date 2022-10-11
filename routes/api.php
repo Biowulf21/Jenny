@@ -39,6 +39,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 
 	Route::group(['middleware' => ['role:applicant']], function() {
 		Route::get('/applicant/exams', [ExamController::class, 'getApplicantExams']);
+		Route::get('/applicant/exam/{id}', [ExamController::class, 'getSingleApplicantExam']);
 	});	
 	
 	// Route::group(['middleware' => ['role:applicant,admin']], function () {
