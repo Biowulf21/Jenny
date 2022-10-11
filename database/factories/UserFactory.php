@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
+use App\Models\Position;
+
 class UserFactory extends Factory
 {
     /**
@@ -15,11 +17,15 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+        $role = $this->faker->randomElement(['admin', 'applicant']);
+        $positionID = ($role === 'applicant') ? Position::inRandomOrder()->first()->id : null;
+
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => Hash::make('Password21!'), // password
-            'role' => $this->faker->randomElement(['admin', 'applicant']),
+            'role' => $role,
+            'for_position' => $positionID,
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ];
