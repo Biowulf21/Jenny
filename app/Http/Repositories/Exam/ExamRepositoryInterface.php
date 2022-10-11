@@ -11,6 +11,7 @@ interface ExamRepositoryInterface {
     // Admin-side
     public function createExam(array $data);
     public function deleteExam(int $id);
+    public function editExam(array $data, int $id);
     public function showAllExams();
     public function showSingleExam(int $id);
 

@@ -17,22 +17,8 @@ class ExamRepository implements ExamRepositoryInterface
 
    public function createExam(array $data)
    {
-     try {
-          $validator = Validator::make($data, 
-               [
-                    'name' => 'required|string', 
-                    'description' => 'nullable|string',
-                    'for_position' => 'required'
-               ]
-          );
-
-          if($validator->fails())
-          {
-               $error_message = $validator->errors()->all();
-               throw new ValidatorFailedException($error_message[0], $validator->errors());
-          }
-
-          $validated = $validator->validated();
+     try {        
+          $validated = $this->validateExam($data);
           $exam = Exam::create($validated);
 
           return response()->pass('Successfully created exam', $exam);
@@ -52,6 +38,20 @@ class ExamRepository implements ExamRepositoryInterface
           return response()->pass($e->getMessage());
      }
 
+   }
+
+   public function editExam(array $data, int $id)
+   {
+     try {        
+          $validated = $this->validateExam($data);
+          Exam::where('id', $id)->update($validated);
+          $exam = Exam::find($id);
+
+          return response()->pass('Successfully edited exam', $exam);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());
+     }
+       
    }
 
    public function showAllExams()
@@ -76,6 +76,25 @@ class ExamRepository implements ExamRepositoryInterface
           return response()->pass($e->getMessage());     
      }
 
+   }
+
+   private function validateExam(array $data)
+   {
+     $validator = Validator::make($data, 
+          [
+               'name' => 'required|string', 
+               'description' => 'nullable|string',
+               'for_position' => 'required'
+          ]
+     );
+
+     if($validator->fails())
+     {
+          $error_message = $validator->errors()->all();
+          throw new ValidatorFailedException($error_message[0], $validator->errors());
+     }
+
+     return $validator->validated();
    }
    
    public function showApplicantExams()
