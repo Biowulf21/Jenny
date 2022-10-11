@@ -83,7 +83,9 @@ class ExamRepository implements ExamRepositoryInterface
      try { 
           $user = Auth::user();
           $exams = Exam::where('for_position', $user->for_position)->paginate(10);
-          return response()->pass('Successfully fetched exams for applicant position', $exams);
+          $message = ($exams->total() !== 0) ? "Successfully fetched all exams for applicant position" : "There is no existing exam";
+
+          return response()->pass($message, $exams);
      } catch (Exception $e) {
           return response()->pass($e->getMessage());     
      }
