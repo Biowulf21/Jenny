@@ -3,9 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+use App\Http\Repositories\Position\PositionRepositoryInterface; 
 
 class PositionController extends Controller
 {
+    private $repository; 
+    public function __construct(PositionRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +22,7 @@ class PositionController extends Controller
      */
     public function index()
     {
-        //
+        return $this->repository->getAllPositions();
     }
 
     /**

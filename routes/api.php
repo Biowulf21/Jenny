@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\PositionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,8 @@ use App\Http\Controllers\QuestionController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::resource('position', PositionController::class);
 
 Route::controller(UserController::class)->group(function() {
 	Route::get('/index', 'index')->name('index');
