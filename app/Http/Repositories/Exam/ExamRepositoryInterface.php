@@ -12,4 +12,5 @@ interface ExamRepositoryInterface {
     public function deleteExam(int $id);
     public function showAllExams();
     public function showSingleExam(int $id);
+    public function showApplicantExams();
 }
