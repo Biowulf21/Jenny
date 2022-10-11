@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+use App\Models\Position;
+
 class ExamFactory extends Factory
 {
     /**
@@ -16,6 +18,7 @@ class ExamFactory extends Factory
         return [
             'name' => $this->faker->words(rand(3, 6), true),
             'description' => $this->faker->paragraph(),
+            'for_position' => Position::inRandomOrder()->first()->id, 
         ];
     }
 }

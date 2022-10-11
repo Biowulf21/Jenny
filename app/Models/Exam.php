@@ -19,6 +19,7 @@ class Exam extends Model
     protected $fillable = [
         'name',
         'description',
+        'for_position',
     ];
 
 }
