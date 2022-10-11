@@ -12,6 +12,10 @@ use App\Http\Repositories\Applicant\ApplicantRepository;
 use App\Http\Repositories\Applicant\ApplicantRepositoryInterface; 
 use App\Http\Repositories\Exam\ExamRepository; 
 use App\Http\Repositories\Exam\ExamRepositoryInterface; 
+use App\Http\Repositories\Question\QuestionRepository; 
+use App\Http\Repositories\Question\QuestionRepositoryInterface; 
+use App\Http\Repositories\Position\PositionRepository; 
+use App\Http\Repositories\Position\PositionRepositoryInterface; 
 
 class RepositoriesServiceProvider extends ServiceProvider
 {
@@ -36,5 +40,7 @@ class RepositoriesServiceProvider extends ServiceProvider
         $this->app->bind(AdminRepositoryInterface::class, AdminRepository::class);
         $this->app->bind(ApplicantRepositoryInterface::class, ApplicantRepository::class);
         $this->app->bind(ExamRepositoryInterface::class, ExamRepository::class);
+        $this->app->bind(QuestionRepositoryInterface::class, QuestionRepository::class);
+        $this->app->bind(PositionRepositoryInterface::class, PositionRepository::class);
     }
 }

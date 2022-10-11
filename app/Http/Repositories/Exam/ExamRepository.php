@@ -3,47 +3,113 @@
 namespace App\Http\Repositories\Exam;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 use App\Exceptions\ValidatorFailedException;
 use App\Models\Exam;
+use App\Models\Position;
+use App\Models\User;
 
 class ExamRepository implements ExamRepositoryInterface
 {
 
-   public function createExam(array $data): Exam
+   public function createExam(array $data)
    {
-       $validator = Validator::make($data, 
-            [
-                'name' => 'required|string|unique:exams,name', 
-                'description' => 'nullable'
-            ]
-        );
+     try {
+          $validator = Validator::make($data, 
+               [
+                    'name' => 'required|string', 
+                    'description' => 'nullable|string',
+                    'for_position' => 'required'
+               ]
+          );
 
-        if($validator->fails())
-        {
-            throw new ValidatorFailedException('Failed creating exam', $validator->errors());
-        }
+          if($validator->fails())
+          {
+               $error_message = $validator->errors()->all();
+               throw new ValidatorFailedException($error_message[0], $validator->errors());
+          }
 
-        $validated = $validator->validated();
+          $validated = $validator->validated();
+          $exam = Exam::create($validated);
 
-        return Exam::create($validated);
+          return response()->pass('Successfully created exam', $exam);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());
+     }
+       
    }
 
-   public function deleteExam(int $id): void
+   public function deleteExam(int $id)
    {
-        Exam::findOrFail($id)->delete();
+     try {
+          Exam::findOrFail($id)->delete();
+
+          return response()->pass('Successfully deleted exam');
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());
+     }
+
    }
 
-   public function showAllExams(): Collection
+   public function showAllExams()
    {
-        return Exam::orderBy('created_at', 'asc')->get();
+     try { 
+          $exams = Exam::orderBy('created_at', 'asc')->paginate(10);
+          $message = (count($exams) !== 0) ? "Successfully fetched all exams" : "There is no existing exam";
+
+          return response()->pass($message, $exams);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());
+     }
+
    }
 
-   public function showSingleExam(int $id): Exam 
+   public function showSingleExam(int $id)
    {
-        return Exam::where('id', $id)->firstOrFail();
+     try { 
+          $exam = Exam::where('id', $id)->firstOrFail();
+          return response()->pass('Successfully fetched exam ID ' . $id, $exam);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());     
+     }
+
+   }
+   
+   public function showApplicantExams()
+   {
+     try { 
+          $user = Auth::user();
+          $exams = Exam::where('for_position', $user->for_position)->paginate(10);
+          $message = ($exams->total() !== 0) ? "Successfully fetched all exams for applicant position" : "There is no existing exam";
+
+          return response()->pass($message, $exams);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());     
+     }
+
+   }
+
+   public function showSingleApplicantExam(int $id)
+   {
+     try { 
+          $user = Auth::user();
+          $exam = Exam::findOrFail($id);
+
+          if ($user->for_position === $exam->for_position) {
+               return response()->pass('Successfully fetched specific exam for applicant', $exam);
+          } else {
+               return response()->json([
+                    'message' => 'Forbidden: Applicant is not permitted to view this specific exam',
+                    'data' => [],
+               ], 401);
+          }
+
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());   
+     }
    }
 
 }
