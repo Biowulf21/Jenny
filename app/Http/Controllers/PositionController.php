@@ -25,6 +25,17 @@ class PositionController extends Controller
         return $this->repository->getAllPositions();
     }
 
+
+    /**
+     * Display a listing of the resource on registration page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getAll()
+    {
+        return $this->repository->getAllPositions();
+    }
+
     /**
      * Show the form for creating a new resource.
      *

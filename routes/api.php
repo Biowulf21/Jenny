@@ -21,8 +21,7 @@ use App\Http\Controllers\PositionController;
 |
 */
 
-Route::resource('position', PositionController::class);
-
+Route::get('/position/all', [PositionController::class, 'getAll']);
 Route::controller(UserController::class)->group(function() {
 	Route::get('/index', 'index')->name('index');
 	Route::post('/login', 'login')->name('login');
