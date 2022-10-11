@@ -13,6 +13,7 @@ use App\Http\Resources\AuthenticatedUserResource as AuthenticatedUser;
 use App\Exceptions\ValidatorFailedException;
 use App\Exceptions\InvalidCredentialException;
 use App\Models\User;
+use App\Models\Position;
 
 class UserRepository implements UserRepositoryInterface{
 
@@ -52,7 +53,8 @@ class UserRepository implements UserRepositoryInterface{
             $validator = Validator::make($data, 
                 [
                     'name' => 'required|string', 
-                    'email' => 'required|email|unique:users,email', 
+                    'email' => 'required|email|unique:users,email',                     
+                    'for_position' => $role === 'applicant' ? 'required' : 'nullable',
                     'password' => 'required|string|min:8',
                     'password_confirmation' => 'required|string|same:password',
                 ]
@@ -64,9 +66,9 @@ class UserRepository implements UserRepositoryInterface{
                 throw new ValidatorFailedException($error_message[0], $validator->errors());
             }
 
-            $validated = $validator->validated();
+            $validated = $validator->validated();      
 
-            $validated['role'] = $role; 
+            $validated['role'] = $role;
             $validated['password'] = Hash::make($validated['password']);
 
             $user = User::create($validated);

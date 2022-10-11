@@ -54,7 +54,7 @@ class PositionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $this->repository->createPosition($request->all());
     }
 
     /**
@@ -88,7 +88,7 @@ class PositionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->repository->editPosition($request->all(), $id);
     }
 
     /**
@@ -99,6 +99,6 @@ class PositionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return $this->repository->deletePosition($id);
     }
 }
