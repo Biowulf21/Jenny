@@ -51,6 +51,7 @@ class ExamRepository implements ExamRepositoryInterface
      } catch (Exception $e) {
           return response()->pass($e->getMessage());
      }
+
    }
 
    public function showAllExams()
@@ -82,9 +83,32 @@ class ExamRepository implements ExamRepositoryInterface
      try { 
           $user = Auth::user();
           $exams = Exam::where('for_position', $user->for_position)->paginate(10);
-          return response()->pass('Successfully fetched exams for applicant position', $exams);
+          $message = ($exams->total() !== 0) ? "Successfully fetched all exams for applicant position" : "There is no existing exam";
+
+          return response()->pass($message, $exams);
      } catch (Exception $e) {
           return response()->pass($e->getMessage());     
+     }
+
+   }
+
+   public function showSingleApplicantExam(int $id)
+   {
+     try { 
+          $user = Auth::user();
+          $exam = Exam::findOrFail($id);
+
+          if ($user->for_position === $exam->for_position) {
+               return response()->pass('Successfully fetched specific exam for applicant', $exam);
+          } else {
+               return response()->json([
+                    'message' => 'Forbidden: Applicant is not permitted to view this specific exam',
+                    'data' => [],
+               ], 401);
+          }
+
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());   
      }
    }
 
