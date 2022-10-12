@@ -15,7 +15,7 @@ class CreateApplicantQuestionTable extends Migration
     {
         Schema::create('applicant_questions', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('applicant_id');
+            $table->foreignID('applicant_id')->constrained('users');
             $table->foreignID('question_id')->constrained();
             $table->string('answer');
             $table->boolean('isCorrect');
