@@ -3,32 +3,22 @@
 namespace App\Http\Repositories\Exam;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 use App\Exceptions\ValidatorFailedException;
 use App\Models\Exam;
+use App\Models\Position;
+use App\Models\User;
 
 class ExamRepository implements ExamRepositoryInterface
 {
 
    public function createExam(array $data)
    {
-     try {
-          $validator = Validator::make($data, 
-               [
-                    'name' => 'required|string|unique:exams,name', 
-                    'description' => 'nullable'
-               ]
-          );
-
-          if($validator->fails())
-          {
-               $error_message = $validator->errors()->all();
-               throw new ValidatorFailedException($error_message[0], $validator->errors());
-          }
-
-          $validated = $validator->validated();
+     try {        
+          $validated = $this->validateExam($data);
           $exam = Exam::create($validated);
 
           return response()->pass('Successfully created exam', $exam);
@@ -47,13 +37,30 @@ class ExamRepository implements ExamRepositoryInterface
      } catch (Exception $e) {
           return response()->pass($e->getMessage());
      }
+
+   }
+
+   public function editExam(array $data, int $id)
+   {
+     try {        
+          $validated = $this->validateExam($data);
+          Exam::where('id', $id)->update($validated);
+          $exam = Exam::find($id);
+
+          return response()->pass('Successfully edited exam', $exam);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());
+     }
+       
    }
 
    public function showAllExams()
    {
      try { 
-          $exams = Exam::orderBy('created_at', 'asc')->get();
-          return response()->pass('Successfully fectched all exams', $exams);
+          $exams = Exam::orderBy('created_at', 'asc')->paginate(10);
+          $message = (count($exams) !== 0) ? "Successfully fetched all exams" : "There is no existing exam";
+
+          return response()->pass($message, $exams);
      } catch (Exception $e) {
           return response()->pass($e->getMessage());
      }
@@ -69,6 +76,59 @@ class ExamRepository implements ExamRepositoryInterface
           return response()->pass($e->getMessage());     
      }
 
+   }
+
+   private function validateExam(array $data)
+   {
+     $validator = Validator::make($data, 
+          [
+               'name' => 'required|string', 
+               'description' => 'nullable|string',
+               'for_position' => 'required'
+          ]
+     );
+
+     if($validator->fails())
+     {
+          $error_message = $validator->errors()->all();
+          throw new ValidatorFailedException($error_message[0], $validator->errors());
+     }
+
+     return $validator->validated();
+   }
+   
+   public function showApplicantExams()
+   {
+     try { 
+          $user = Auth::user();
+          $exams = Exam::where('for_position', $user->for_position)->paginate(10);
+          $message = ($exams->total() !== 0) ? "Successfully fetched all exams for applicant position" : "There is no existing exam";
+
+          return response()->pass($message, $exams);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());     
+     }
+
+   }
+
+   public function showSingleApplicantExam(int $id)
+   {
+     try { 
+          $user = Auth::user();
+          $exam = Exam::findOrFail($id);
+
+          if ($user->for_position === $exam->for_position) {
+               return response()->pass('Successfully fetched specific exam for applicant', $exam);
+          } else {
+               return response()->json([
+                    'message' => 'Forbidden: Applicant is not permitted to view this specific exam',
+                    'data' => [],
+               ], 401);
+          }
+
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());   
+     }
    }
 
 }

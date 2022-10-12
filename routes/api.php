@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\PositionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,7 @@ use App\Http\Controllers\QuestionController;
 |
 */
 
+Route::get('/position/all', [PositionController::class, 'getAll']);
 Route::controller(UserController::class)->group(function() {
 	Route::get('/index', 'index')->name('index');
 	Route::post('/login', 'login')->name('login');
@@ -31,12 +33,18 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 	Route::group(['middleware' => ['role:admin']], function () {
 		Route::resource('admin', AdminController::class);
 		Route::resource('exam', ExamController::class);
-		Route::resource('question', QuestionController::class);		
+		Route::resource('question', QuestionController::class);
+		Route::resource('position', PositionController::class);				
 	});
 
-	Route::group(['middleware' => ['role:applicant,admin']], function () {
-		Route::resource('exam', ExamController::class)->only('index', 'show');
-		Route::resource('question', QuestionController::class)->only('show');
-		Route::get('/question/all/{exam_id}', [QuestionController::class, 'showQuestionByExam']);
-	});
+	Route::group(['prefix' => 'applicant', 'middleware' => ['role:applicant']], function() {
+		Route::get('/exams', [ExamController::class, 'getApplicantExams']);
+		Route::get('/exam/{id}', [ExamController::class, 'getSingleApplicantExam']);
+	});	
+	
+	// Route::group(['middleware' => ['role:applicant,admin']], function () {
+	// 	Route::resource('exam', ExamController::class)->only('index', 'show');
+	// 	Route::resource('question', QuestionController::class)->only('show');
+	// 	Route::get('/question/all/{exam_id}', [QuestionController::class, 'showQuestionByExam']);
+	// });
 });
