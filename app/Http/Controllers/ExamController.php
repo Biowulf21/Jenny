@@ -51,7 +51,7 @@ class ExamController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        return $this->repository->editExam($request->all(), $id);
     }
 
     public function destroy($id)
