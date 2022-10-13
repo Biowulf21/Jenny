@@ -1,0 +1,12 @@
+============ NOTES (because I am a forgetful person who will cry eventually) =================
+
+
+Send multidimensional array through Thunder Client: 
+Body type: JSON raw
+[
+  {
+    "applicant_id" : "1",
+    "question_id" : "1", 
+    "answer" : "chicken"
+  }
+]
