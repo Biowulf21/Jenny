@@ -10,6 +10,8 @@ class Position extends Model
 {
     use HasFactory;
 
+    protected $table = 'positions';
+    
      /**
      * The attributes that are mass assignable.
      *
