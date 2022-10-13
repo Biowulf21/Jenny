@@ -10,10 +10,11 @@ use App\Models\ApplicantQuestion;
 
 class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterface
 {
-    public function onSubmitCheck(array $data) 
+    public function checkOnSubmit(array $data) 
     {
-        $answer = $data[0]['answer'];
-        return $answer;
+        log::info(isset($data[0]));
+        log::info($data[0]['answer']);
+        // return $answer;
     }
 
     private function validateAnswers(array $data)

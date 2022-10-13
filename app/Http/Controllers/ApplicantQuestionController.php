@@ -8,7 +8,7 @@ use App\Http\Repositories\ApplicantQuestion\ApplicantQuestionRepositoryInterface
 
 class ApplicantQuestionController extends Controller
 {
-    private $repostory; 
+    private $repository; 
     public function __construct(ApplicantQuestionRepositoryInterface $repository)
     {
         $this->repository = $repository;
@@ -16,6 +16,7 @@ class ApplicantQuestionController extends Controller
 
     public function onSubmitCheck(Request $request)
     {
-        return $request->all();
+        // return $request->all();
+        $this->repository->checkOnSubmit($request->all());
     }
 }
