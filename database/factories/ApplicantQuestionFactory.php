@@ -18,13 +18,13 @@ class ApplicantQuestionFactory extends Factory
     {        
         $user = User::where('role', 'applicant')->inRandomOrder()->first();
         $examID = Exam::where('for_position', $user->for_position)->inRandomOrder()->first()->id;
-        $questionID = Question::where('exam_id', $examID)->inRandomOrder()->first()->id;
-
+        $question = Question::where('exam_id', $examID)->inRandomOrder()->first();
+        $answer = ($question->type === 'paragraph') ? " " : $this->faker->randomElement([$question->answer, 'Answer 1', 'Answer 2']);
+        
         return [
             'applicant_id' => $user->id,
-            'question_id' => $questionID,
-            'answer' => $this->faker->words(rand(1, 5), true), 
-            'isCorrect' => $this->faker->boolean(),
+            'question_id' => $question->id,
+            'answer' => $answer,
         ];
     }
 }

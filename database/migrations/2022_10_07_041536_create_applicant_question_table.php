@@ -18,7 +18,8 @@ class CreateApplicantQuestionTable extends Migration
             $table->foreignID('applicant_id')->constrained('users');
             $table->foreignID('question_id')->constrained();
             $table->string('answer');
-            $table->boolean('isCorrect');
+            $table->string('isChecked')->default(false);
+            $table->boolean('isCorrect')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
