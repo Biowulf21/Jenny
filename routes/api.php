@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ApplicantController;
+use App\Http\Controllers\ApplicantQuestionController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\PositionController;
 
@@ -20,7 +21,7 @@ use App\Http\Controllers\PositionController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+Route::post('/submit', [ApplicantQuestionController::class, 'onSubmitCheck']);
 Route::get('/position/all', [PositionController::class, 'getAll']);
 Route::controller(UserController::class)->group(function() {
 	Route::get('/index', 'index')->name('index');

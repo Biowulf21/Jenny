@@ -8,10 +8,10 @@ use App\Http\Repositories\User\UserRepository;
 use App\Http\Repositories\User\UserRepositoryInterface; 
 use App\Http\Repositories\Admin\AdminRepository; 
 use App\Http\Repositories\Admin\AdminRepositoryInterface; 
-use App\Http\Repositories\Admin\AdminQuestionRepository; 
-use App\Http\Repositories\Admin\AdminQuestionRepositoryInterface;
 use App\Http\Repositories\Applicant\ApplicantRepository; 
 use App\Http\Repositories\Applicant\ApplicantRepositoryInterface; 
+use App\Http\Repositories\ApplicantQuestion\ApplicantQuestionRepository; 
+use App\Http\Repositories\ApplicantQuestion\ApplicantQuestionRepositoryInterface;
 use App\Http\Repositories\Exam\ExamRepository; 
 use App\Http\Repositories\Exam\ExamRepositoryInterface; 
 use App\Http\Repositories\Question\QuestionRepository; 
@@ -44,6 +44,6 @@ class RepositoriesServiceProvider extends ServiceProvider
         $this->app->bind(ExamRepositoryInterface::class, ExamRepository::class);
         $this->app->bind(QuestionRepositoryInterface::class, QuestionRepository::class);
         $this->app->bind(PositionRepositoryInterface::class, PositionRepository::class);
-        $this->app->bind(AdminQuestionRepositoryInterface::class, AdminQuestionRepository::class);
+        $this->app->bind(ApplicantQuestionRepositoryInterface::class, ApplicantQuestionRepository::class);
     }
 }
