@@ -45,6 +45,6 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 	Route::group(['prefix' => 'applicant', 'middleware' => ['role:applicant']], function() {
 		Route::get('/exams', [ExamController::class, 'getApplicantExams']);
 		Route::get('/exam/{id}', [ExamController::class, 'getSingleApplicantExam']);
-		Route::post('/submit', [ApplicantQuestionController::class, 'onSubmitCheck']);
+		Route::post('/submit', [ApplicantQuestionController::class, 'applicantChecking']);
 	});	
 });

@@ -58,7 +58,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
         return response()->pass('Successfully retrieved exam results', $results);
     }
 
-    public function checkOnSubmit(array $data) 
+    public function applicantChecking(array $data) 
     {
         $id = Auth::user()->id;
         $toCreate = [];
