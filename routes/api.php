@@ -21,7 +21,6 @@ use App\Http\Controllers\PositionController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('/submit', [ApplicantQuestionController::class, 'onSubmitCheck']);
 Route::get('/position/all', [PositionController::class, 'getAll']);
 Route::controller(UserController::class)->group(function() {
 	Route::get('/index', 'index')->name('index');
@@ -41,6 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 	Route::group(['prefix' => 'applicant', 'middleware' => ['role:applicant']], function() {
 		Route::get('/exams', [ExamController::class, 'getApplicantExams']);
 		Route::get('/exam/{id}', [ExamController::class, 'getSingleApplicantExam']);
+		Route::post('/submit', [ApplicantQuestionController::class, 'onSubmitCheck']);
 	});	
 	
 	// Route::group(['middleware' => ['role:applicant,admin']], function () {

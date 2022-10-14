@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 use App\Http\Repositories\ApplicantQuestion\ApplicantQuestionRepositoryInterface;
 
@@ -16,7 +17,6 @@ class ApplicantQuestionController extends Controller
 
     public function onSubmitCheck(Request $request)
     {
-        // return $request->all();
-        $this->repository->checkOnSubmit($request->all());
+        return $this->repository->checkOnSubmit($request->all());
     }
 }
