@@ -10,15 +10,60 @@ use Illuminate\Validation\ValidationException;
 use App\Exceptions\ValidatorFailedException;
 use App\Models\ApplicantQuestion;
 use App\Models\Question;
+use App\Models\Exam;
 
 class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterface
 {
+
+    public function getExamResults(int $applicantID, int $examID)
+    {
+        $results = [];
+        $score = $checked = $unchecked = $count = 0;
+
+        $examExists = Exam::where('id', $examID)->first();
+        if(!$examExists)
+        {
+            return response()->pass('This exam does not exists', []);
+        }
+
+        $questions = Question::where('exam_id', $examID)->get();
+        if ($questions->isEmpty())
+        {
+            return response()->pass('This exam does not have questions', []);
+        }
+
+        $applicantExam = ApplicantQuestion::where([ ['applicant_id', $applicantID], ['question_id', $questions[0]->id] ])->first();
+        if(!$applicantExam)
+        {
+            return response()->pass('This applicant has not taken this exam', []);
+        }
+
+        foreach($questions as $question) {
+            $results[] = ApplicantQuestion::where([ ['applicant_id', $applicantID], ['question_id', $question->id] ])->first();
+
+            if ($results[$count]->isChecked)
+            {
+                ($results[$count]->isCorrect) ? $score++ : $score;
+                $checked++;
+            } else {
+                $unchecked++;
+            }
+
+            $count++;
+        }
+        
+        $results[] = $score; 
+        $results[] = $checked;
+        $results[] = $unchecked;
+        return response()->pass('Successfully retrieved exam results', $results);
+    }
+
     public function checkOnSubmit(array $data) 
     {
         $id = Auth::user()->id;
         $toCreate = [];
         $questionIDs = [];
-        foreach ($data as $answer)
+        foreach($data as $answer)
         {
             $toCreate['applicant_id'] = $id;
             $toCreate['question_id'] = $answer['question_id'];
@@ -37,7 +82,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
             'checked' => 0,
             'unchecked' => 0,
         ];
-        foreach ($questionIDs as $questionID) 
+        foreach($questionIDs as $questionID) 
         {
             $question = Question::find($questionID);
             $applicant_answer = ApplicantQuestion::where([
@@ -67,7 +112,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
             }
         }
 
-        return $results;
+        return response()->pass('Successfully calculated exam results', $results);
     }
 
     private function validateAnswers(array $data)
@@ -80,8 +125,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                     'answer' => 'required',
                 ]
             );
-
-            
+           
             if($validator->fails())
             {
                 $error_message = $validator->errors()->all();

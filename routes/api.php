@@ -21,6 +21,7 @@ use App\Http\Controllers\PositionController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 Route::get('/position/all', [PositionController::class, 'getAll']);
 Route::controller(UserController::class)->group(function() {
 	Route::get('/index', 'index')->name('index');
@@ -30,6 +31,10 @@ Route::controller(UserController::class)->group(function() {
 
 Route::group(['middleware' => ['auth:sanctum']], function (){
 
+	//Shared routes
+	Route::get('/{applicantID}/{examID}', [ApplicantQuestionController::class, 'getExamResults']);
+
+	//Role-limited routes 
 	Route::group(['middleware' => ['role:admin']], function () {
 		Route::resource('admin', AdminController::class);
 		Route::resource('exam', ExamController::class);
@@ -42,10 +47,4 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 		Route::get('/exam/{id}', [ExamController::class, 'getSingleApplicantExam']);
 		Route::post('/submit', [ApplicantQuestionController::class, 'onSubmitCheck']);
 	});	
-	
-	// Route::group(['middleware' => ['role:applicant,admin']], function () {
-	// 	Route::resource('exam', ExamController::class)->only('index', 'show');
-	// 	Route::resource('question', QuestionController::class)->only('show');
-	// 	Route::get('/question/all/{exam_id}', [QuestionController::class, 'showQuestionByExam']);
-	// });
 });

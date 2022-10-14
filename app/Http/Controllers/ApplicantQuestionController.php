@@ -15,6 +15,11 @@ class ApplicantQuestionController extends Controller
         $this->repository = $repository;
     }
 
+    public function getExamResults(int $applicantID, int $examID)
+    {
+        return $this->repository->getExamResults($applicantID, $examID);
+    }
+    
     public function onSubmitCheck(Request $request)
     {
         return $this->repository->checkOnSubmit($request->all());
