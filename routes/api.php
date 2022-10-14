@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ApplicantController;
+use App\Http\Controllers\ApplicantQuestionController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\PositionController;
 
@@ -30,6 +31,10 @@ Route::controller(UserController::class)->group(function() {
 
 Route::group(['middleware' => ['auth:sanctum']], function (){
 
+	//Shared routes
+	Route::get('/results/{applicantID}/{examID}', [ApplicantQuestionController::class, 'getExamResults']);
+
+	//Role-limited routes 
 	Route::group(['middleware' => ['role:admin']], function () {
 		Route::resource('admin', AdminController::class);
 		Route::resource('exam', ExamController::class);
@@ -40,11 +45,6 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 	Route::group(['prefix' => 'applicant', 'middleware' => ['role:applicant']], function() {
 		Route::get('/exams', [ExamController::class, 'getApplicantExams']);
 		Route::get('/exam/{id}', [ExamController::class, 'getSingleApplicantExam']);
+		Route::post('/submit', [ApplicantQuestionController::class, 'applicantChecking']);
 	});	
-	
-	// Route::group(['middleware' => ['role:applicant,admin']], function () {
-	// 	Route::resource('exam', ExamController::class)->only('index', 'show');
-	// 	Route::resource('question', QuestionController::class)->only('show');
-	// 	Route::get('/question/all/{exam_id}', [QuestionController::class, 'showQuestionByExam']);
-	// });
 });

@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User; 
+use App\Models\Exam;
+use App\Models\Question;
 
 class ApplicantQuestionFactory extends Factory
 {
@@ -14,17 +16,15 @@ class ApplicantQuestionFactory extends Factory
      */
     public function definition()
     {        
-        $applicant_ids = [];
-        $applicants = User::where('role', 'applicant')->get();
-        foreach($applicants as $applicant) {
-            $applicant_ids[] = $applicant['id'];
-        }
-
+        $user = User::where('role', 'applicant')->inRandomOrder()->first();
+        $examID = Exam::where('for_position', $user->for_position)->inRandomOrder()->first()->id;
+        $question = Question::where('exam_id', $examID)->inRandomOrder()->first();
+        $answer = ($question->type === 'paragraph') ? " " : $this->faker->randomElement([$question->answer, 'Answer 1', 'Answer 2']);
+        
         return [
-            'applicant_id' => $this->faker->numberBetween(reset($applicant_ids), end($applicant_ids)),
-            'question_id' => $this->faker->numberBetween(1, 5),
-            'answer' => $this->faker->words(rand(1, 5), true), 
-            'isCorrect' => $this->faker->boolean(),
+            'applicant_id' => $user->id,
+            'question_id' => $question->id,
+            'answer' => $answer,
         ];
     }
 }

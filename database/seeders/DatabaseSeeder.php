@@ -22,9 +22,6 @@ class DatabaseSeeder extends Seeder
         User::factory(10)->create();        
         Exam::factory(10)->create();
         Question::factory(25)->create();
-        User::factory(5)->create();
-        Exam::factory(3)->create();
-        Question::factory(5)->create();
         ApplicantQuestion::factory(5)->create();
     }
 }

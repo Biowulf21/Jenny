@@ -20,6 +20,7 @@ class ApplicantQuestion extends Model
         'applicant_id',
         'question_id',
         'answer', 
+        'isChecked',
         'isCorrect'
     ];
 }
