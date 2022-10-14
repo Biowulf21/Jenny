@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
+use App\Exceptions\ValidatorFailedException;
 use App\Models\ApplicantQuestion;
 use App\Models\Question;
 
