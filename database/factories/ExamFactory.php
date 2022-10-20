@@ -21,4 +21,13 @@ class ExamFactory extends Factory
             'for_position' => Position::inRandomOrder()->first()->id, 
         ];
     }
+
+    public function forPosition(int $id)
+    {
+        return [
+            'name' => $this->faker->words(rand(3, 6), true),
+            'description' => $this->faker->paragraph(),
+            'for_position' => $id,
+        ];
+    }
 }

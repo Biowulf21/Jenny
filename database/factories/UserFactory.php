@@ -31,6 +31,38 @@ class UserFactory extends Factory
         ];
     }
 
+    public function admin()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'name' => $this->faker->name(),
+                'email' => $this->faker->unique()->safeEmail(),
+                'password' => Hash::make('Password21!'), // password
+                'role' => 'admin',
+                'for_position' => null,
+                'email_verified_at' => now(),
+                'remember_token' => Str::random(10),
+            ];
+        });
+    }
+
+    public function applicant()
+    {
+        return $this->state(function (array $attributes) {
+            $positionID = Position::inRandomOrder()->first()->id;
+
+            return [
+                'name' => $this->faker->name(),
+                'email' => $this->faker->unique()->safeEmail(),
+                'password' => Hash::make('Password21!'), // password
+                'role' => 'applicant',
+                'for_position' => $positionID,
+                'email_verified_at' => now(),
+                'remember_token' => Str::random(10),
+            ];
+        });
+    }
+
     /**
      * Indicate that the model's email address should be unverified.
      *

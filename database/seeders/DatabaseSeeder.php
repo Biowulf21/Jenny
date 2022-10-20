@@ -19,9 +19,10 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         Position::factory(5)->create();
-        User::factory(10)->create();        
+        User::factory(5)->admin()->create();
+        User::factory(5)->applicant()->create();         
         Exam::factory(10)->create();
         Question::factory(25)->create();
-        ApplicantQuestion::factory(5)->create();
+        ApplicantQuestion::factory(15)->create();
     }
 }
