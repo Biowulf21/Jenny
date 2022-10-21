@@ -84,7 +84,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
         ];
         foreach($questionIDs as $questionID) 
         {
-            $question = Question::find($questionID);
+            $question = Question::findOrFail($questionID);
             $applicant_answer = ApplicantQuestion::where([
                 ['applicant_id', $id], 
                 ['question_id', $questionID],

@@ -8,6 +8,10 @@ use App\Models\Exam;
 
 class QuestionFactory extends Factory
 {
+    protected $casts = [
+        'options' => 'array',
+    ];
+
     /**
      * Define the model's default state.
      *
@@ -22,10 +26,22 @@ class QuestionFactory extends Factory
             'type' => $this->faker->randomElement(['radio', 'single', 'paragraph']),
             'problem' => $this->faker->paragraph(),
             'options' => [
-                'A' => $this->faker->paragraph, 
-                'B' => $this->faker->paragraph, 
-                'C' => $this->faker->paragraph,
-                'D' => $this->faker->paragraph
+                [   
+                    'key' => 'A',
+                    'value' => $this->faker->paragraph,
+                ], 
+                [   
+                    'key' => 'B',
+                    'value' => $this->faker->paragraph,
+                ],
+                [   
+                    'key' => 'C',
+                    'value' => $this->faker->paragraph,
+                ],
+                [   
+                    'key' => 'D',
+                    'value' => $this->faker->paragraph,
+                ],
             ],
             'answer' => $this->faker->randomElement(['A', 'B', 'C', 'D']),
         ];

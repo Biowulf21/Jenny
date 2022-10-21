@@ -33,14 +33,14 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 
 	//Shared routes
 	Route::get('/results/{applicantID}/{examID}', [ApplicantQuestionController::class, 'getExamResults']);
+	Route::get('{exam_id}/question/all', [QuestionController::class, 'showQuestionByExam']);	
 
 	//Role-limited routes 
 	Route::group(['middleware' => ['role:admin']], function () {
 		Route::resource('admin', AdminController::class);
 		Route::resource('exam', ExamController::class);
 		Route::resource('question', QuestionController::class);
-		Route::resource('position', PositionController::class);
-		Route::get('/question/all/{exam_id}', [QuestionController::class, 'showQuestionByExam']);				
+		Route::resource('position', PositionController::class);			
 	});
 
 	Route::group(['prefix' => 'applicant', 'middleware' => ['role:applicant']], function() {
