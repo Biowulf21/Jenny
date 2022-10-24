@@ -24,4 +24,9 @@ class ApplicantQuestionController extends Controller
     {
         return $this->repository->applicantChecking($request->all());
     }
+
+    public function getParagraphQuestions(int $applicantID, int $examID)
+    {
+        return $this->repository->getParagraphQuestions($applicantID, $examID);
+    }
 }

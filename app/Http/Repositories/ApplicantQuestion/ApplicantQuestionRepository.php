@@ -18,13 +18,35 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
     public function getParagraphQuestions(int $applicantID, int $examID)
     {
         try {
+            $paragraphQuestions = Question::where([
+                ['exam_id', $examID],
+                ['type', 'paragraph']
+            ])->get();
+            if ($paragraphQuestions->isEmpty())
+            {
+                return response()->json([
+                    'message' => 'Exam does not have a paragraph-type question',
+                    'data' => [],
+                ], 502);
+            }
 
-        }
+            $questions = [];
+            foreach($paragraphQuestions as $paragraphQuestion) {
+                $questions[0] = ApplicantQuestion::where([
+                        ['applicant_id', $applicantID],
+                        ['question_id', $paragraphQuestion->id],
+                ])->first();
+            }
+
+            return response()->pass('Successfully retrieved questions with type paragraph', $questions);
+        } catch (Exception $e) {
+            return response()->pass($e->getMessage());
+        } 
     }
 
     public function getExamResults(int $applicantID, int $examID)
     {
-        try{
+        try {
             $results = [];
             $score = $checked = $unchecked = $count = 0;
 
@@ -46,7 +68,10 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                 ], 502);
             }
 
-            $applicantExam = ApplicantQuestion::where([ ['applicant_id', $applicantID], ['question_id', $questions[0]->id] ])->first();
+            $applicantExam = ApplicantQuestion::where([ 
+                ['applicant_id', $applicantID], 
+                ['question_id', $questions[0]->id] 
+                ])->first();
             if(!$applicantExam)
             {
                 return response()->json([
@@ -56,7 +81,10 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
             }
 
             foreach($questions as $question) {
-                $results[] = ApplicantQuestion::where([ ['applicant_id', $applicantID], ['question_id', $question->id] ])->first();
+                $results[] = ApplicantQuestion::where([ 
+                    ['applicant_id', $applicantID], 
+                    ['question_id', $question->id] 
+                    ])->first();
 
                 if ($results[$count]->isChecked)
                 {

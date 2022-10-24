@@ -40,7 +40,9 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 		Route::resource('admin', AdminController::class);
 		Route::resource('exam', ExamController::class);
 		Route::resource('question', QuestionController::class);
-		Route::resource('position', PositionController::class);			
+		Route::resource('position', PositionController::class);
+		Route::get('/paragraphs/{applicantID}/{examID}', [ApplicantQuestionController::class, 'getParagraphQuestions']);
+					
 	});
 
 	Route::group(['prefix' => 'applicant', 'middleware' => ['role:applicant']], function() {
