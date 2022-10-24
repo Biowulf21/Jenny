@@ -32,7 +32,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
 
             $questions = [];
             foreach($paragraphQuestions as $paragraphQuestion) {
-                $questions[0] = ApplicantQuestion::where([
+                $questions[] = ApplicantQuestion::where([
                         ['applicant_id', $applicantID],
                         ['question_id', $paragraphQuestion->id],
                 ])->first();
