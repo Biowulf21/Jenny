@@ -18,6 +18,8 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
     public function getParagraphQuestions(int $applicantID, int $examID)
     {
         try {
+            $data = []; 
+
             $paragraphQuestions = Question::where([
                 ['exam_id', $examID],
                 ['type', 'paragraph']
@@ -30,15 +32,18 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                 ], 502);
             }
 
-            $questions = [];
+            $data['questions'] = $paragraphQuestions;
+
+            $answers = [];
             foreach($paragraphQuestions as $paragraphQuestion) {
-                $questions[] = ApplicantQuestion::where([
+                $answers[] = ApplicantQuestion::where([
                         ['applicant_id', $applicantID],
                         ['question_id', $paragraphQuestion->id],
                 ])->first();
             }
+            $data['answers'] = $answers;
 
-            return response()->pass('Successfully retrieved questions with type paragraph', $questions);
+            return response()->pass('Successfully retrieved questions with type paragraph', $data);
         } catch (Exception $e) {
             return response()->pass($e->getMessage());
         } 
@@ -125,7 +130,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
             return response()->pass($e->getMessage());
         }
     }
-    
+
     public function applicantChecking(array $data) 
     {
         $id = Auth::user()->id;
