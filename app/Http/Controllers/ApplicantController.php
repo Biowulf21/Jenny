@@ -21,7 +21,7 @@ class ApplicantController extends Controller
      */
     public function index()
     {
-        //
+        return $this->repository->showAllApplicants();
     }
 
     /**
@@ -42,7 +42,7 @@ class ApplicantController extends Controller
      */
     public function store(Request $request)
     {
-        return $this->repository->createApplicantUser($request->all());
+
     }
 
     /**
@@ -53,7 +53,7 @@ class ApplicantController extends Controller
      */
     public function show($id)
     {
-        //
+        return $this->repository->showOneApplicant($id);
     }
 
     /**

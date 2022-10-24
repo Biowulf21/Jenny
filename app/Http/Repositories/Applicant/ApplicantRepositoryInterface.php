@@ -6,5 +6,6 @@ use Illuminate\Http\Request;
 
 interface ApplicantRepositoryInterface 
 {
-    public function createApplicantUser(array $data);
+    public function showAllApplicants();
+    public function showOneApplicant(int $id);
 }

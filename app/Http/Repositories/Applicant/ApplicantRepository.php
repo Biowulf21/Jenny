@@ -5,12 +5,19 @@ namespace App\Http\Repositories\Applicant;
 use Illuminate\Support\Facades\Log;
 
 use App\Http\Repositories\User\UserRepository;
+use App\Models\User;
 
 class ApplicantRepository implements ApplicantRepositoryInterface
 {
-  public function createApplicantUser(array $data)
+  public function showAllApplicants()
   {
-    $user = new UserRepository; 
-    return $user->createUser($data, 'applicant');
+    $applicants = User::where('role', 'applicant');
+    return response()->pass('Successfully fetched all applicants', $applicants);   
+  }
+
+  public function showOneApplicant(int $id)
+  {
+    $applicant = User::findOrFail($id);
+    return response()->pass('Successfully fetched one applicant', $applicant);   
   }
 }

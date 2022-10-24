@@ -38,6 +38,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 	//Role-limited routes 
 	Route::group(['middleware' => ['role:admin']], function () {
 		Route::resource('admin', AdminController::class);
+		Route::resource('applicant', ApplicantController::class);
 		Route::resource('exam', ExamController::class);
 		Route::resource('question', QuestionController::class);
 		Route::resource('position', PositionController::class);
