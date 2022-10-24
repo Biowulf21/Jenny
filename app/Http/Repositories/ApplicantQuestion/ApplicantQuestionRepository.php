@@ -15,6 +15,13 @@ use App\Models\Exam;
 class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterface
 {
 
+    public function getParagraphQuestions(int $applicantID, int $examID)
+    {
+        try {
+
+        }
+    }
+
     public function getExamResults(int $applicantID, int $examID)
     {
         $results = [];
