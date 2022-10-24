@@ -17,45 +17,59 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
 
     public function getExamResults(int $applicantID, int $examID)
     {
-        $results = [];
-        $score = $checked = $unchecked = $count = 0;
+        try{
+            $results = [];
+            $score = $checked = $unchecked = $count = 0;
 
-        $examExists = Exam::where('id', $examID)->first();
-        if(!$examExists)
-        {
-            return response()->pass('This exam does not exists', []);
-        }
-
-        $questions = Question::where('exam_id', $examID)->get();
-        if ($questions->isEmpty())
-        {
-            return response()->pass('This exam does not have questions', []);
-        }
-
-        $applicantExam = ApplicantQuestion::where([ ['applicant_id', $applicantID], ['question_id', $questions[0]->id] ])->first();
-        if(!$applicantExam)
-        {
-            return response()->pass('This applicant has not taken this exam', []);
-        }
-
-        foreach($questions as $question) {
-            $results[] = ApplicantQuestion::where([ ['applicant_id', $applicantID], ['question_id', $question->id] ])->first();
-
-            if ($results[$count]->isChecked)
+            $examExists = Exam::where('id', $examID)->first();
+            if(!$examExists)
             {
-                ($results[$count]->isCorrect) ? $score++ : $score;
-                $checked++;
-            } else {
-                $unchecked++;
+                return response()->json([
+                    'message' => 'This exam does not exists',
+                    'data' => [],
+                ], 502);
             }
 
-            $count++;
+            $questions = Question::where('exam_id', $examID)->get();
+            if ($questions->isEmpty())
+            {
+                return response()->json([
+                    'message' => 'This exam does not have questions',
+                    'data' => [],
+                ], 502);
+            }
+
+            $applicantExam = ApplicantQuestion::where([ ['applicant_id', $applicantID], ['question_id', $questions[0]->id] ])->first();
+            if(!$applicantExam)
+            {
+                return response()->json([
+                    'message' => 'This applicant has not taken this exam',
+                    'data' => [],
+                ], 502);
+            }
+
+            foreach($questions as $question) {
+                $results[] = ApplicantQuestion::where([ ['applicant_id', $applicantID], ['question_id', $question->id] ])->first();
+
+                if ($results[$count]->isChecked)
+                {
+                    ($results[$count]->isCorrect) ? $score++ : $score;
+                    $checked++;
+                } else {
+                    $unchecked++;
+                }
+
+                $count++;
+            }
+            
+            $results[] = $score; 
+            $results[] = $checked;
+            $results[] = $unchecked;
+            return response()->pass('Successfully retrieved exam results', $results);
+        } catch (Exception $e) {
+            return response()->pass($e->getMessage());
         }
-        
-        $results[] = $score; 
-        $results[] = $checked;
-        $results[] = $unchecked;
-        return response()->pass('Successfully retrieved exam results', $results);
+
     }
 
     public function applicantChecking(array $data) 
