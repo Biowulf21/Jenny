@@ -15,9 +15,43 @@ use App\Models\Exam;
 class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterface
 {
 
+    public function getParagraphQuestions(int $applicantID, int $examID)
+    {
+        try {
+            $data = []; 
+
+            $paragraphQuestions = Question::where([
+                ['exam_id', $examID],
+                ['type', 'paragraph']
+            ])->get();
+            if ($paragraphQuestions->isEmpty())
+            {
+                return response()->json([
+                    'message' => 'Exam does not have a paragraph-type question',
+                    'data' => [],
+                ], 502);
+            }
+
+            $data['questions'] = $paragraphQuestions;
+
+            $answers = [];
+            foreach($paragraphQuestions as $paragraphQuestion) {
+                $answers[] = ApplicantQuestion::where([
+                        ['applicant_id', $applicantID],
+                        ['question_id', $paragraphQuestion->id],
+                ])->first();
+            }
+            $data['answers'] = $answers;
+
+            return response()->pass('Successfully retrieved questions with type paragraph', $data);
+        } catch (Exception $e) {
+            return response()->pass($e->getMessage());
+        } 
+    }
+
     public function getExamResults(int $applicantID, int $examID)
     {
-        try{
+        try {
             $results = [];
             $score = $checked = $unchecked = $count = 0;
 
@@ -39,7 +73,10 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                 ], 502);
             }
 
-            $applicantExam = ApplicantQuestion::where([ ['applicant_id', $applicantID], ['question_id', $questions[0]->id] ])->first();
+            $applicantExam = ApplicantQuestion::where([ 
+                ['applicant_id', $applicantID], 
+                ['question_id', $questions[0]->id] 
+                ])->first();
             if(!$applicantExam)
             {
                 return response()->json([
@@ -49,7 +86,10 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
             }
 
             foreach($questions as $question) {
-                $results[] = ApplicantQuestion::where([ ['applicant_id', $applicantID], ['question_id', $question->id] ])->first();
+                $results[] = ApplicantQuestion::where([ 
+                    ['applicant_id', $applicantID], 
+                    ['question_id', $question->id] 
+                    ])->first();
 
                 if ($results[$count]->isChecked)
                 {
@@ -70,6 +110,25 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
             return response()->pass($e->getMessage());
         }
 
+    }
+
+    public function adminChecking(array $data)
+    {
+        try { 
+            foreach($data as $checked) {
+                ApplicantQuestion::where([
+                    ['applicant_id', $checked->applicant_id],
+                    ['question_id', $checked->question_id],
+                ])->update([
+                    'isChecked' => $checked->isChecked,
+                    'isCorrect' => $checked->isCorrect,
+                ]);
+            }
+
+            return response()->pass('Successfully updated applicant answer data', []);
+        } catch (Exception $e) {
+            return response()->pass($e->getMessage());
+        }
     }
 
     public function applicantChecking(array $data) 

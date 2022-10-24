@@ -20,8 +20,17 @@ class ApplicantQuestionController extends Controller
         return $this->repository->getExamResults($applicantID, $examID);
     }
     
+    public function adminChecking(Request $request)
+    {
+        return $this->repository->adminChecking($request->all());
+    }
     public function applicantChecking(Request $request)
     {
         return $this->repository->applicantChecking($request->all());
+    }
+
+    public function getParagraphQuestions(int $applicantID, int $examID)
+    {
+        return $this->repository->getParagraphQuestions($applicantID, $examID);
     }
 }
