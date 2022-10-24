@@ -107,6 +107,25 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
 
     }
 
+    public function adminChecking(array $data)
+    {
+        try { 
+            foreach($data as $checked) {
+                ApplicantQuestion::where([
+                    ['applicant_id', $checked->applicant_id],
+                    ['question_id', $checked->question_id],
+                ])->update([
+                    'isChecked' => $checked->isChecked,
+                    'isCorrect' => $checked->isCorrect,
+                ]);
+            }
+
+            return response()->pass('Successfully updated applicant answer data', []);
+        } catch (Exception $e) {
+            return response()->pass($e->getMessage());
+        }
+    }
+    
     public function applicantChecking(array $data) 
     {
         $id = Auth::user()->id;

@@ -42,7 +42,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 		Route::resource('question', QuestionController::class);
 		Route::resource('position', PositionController::class);
 		Route::get('/paragraphs/{applicantID}/{examID}', [ApplicantQuestionController::class, 'getParagraphQuestions']);
-					
+		Route::post('/check', [ApplicantQuestionController::class, 'adminChecking']);			
 	});
 
 	Route::group(['prefix' => 'applicant', 'middleware' => ['role:applicant']], function() {
