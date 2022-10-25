@@ -23,6 +23,16 @@ class PositionRepository implements PositionRepositoryInterface
           }
     }
 
+    public function getSinglePosition(int $id)
+    {
+          try {
+               $position = Position::findOrFail($id);
+               return response()->pass('Successfully fetched position', $position);
+          } catch (Exception $e) {
+               return response()->pass($e->getMessage());
+          }
+    }
+
     public function createPosition(array $data)
     {
           try {   

@@ -65,7 +65,7 @@ class PositionController extends Controller
      */
     public function show($id)
     {
-        //
+        return $this->repository->getSinglePosition($id);
     }
 
     /**
@@ -100,5 +100,10 @@ class PositionController extends Controller
     public function destroy($id)
     {
         return $this->repository->deletePosition($id);
+    }
+
+    public function getApplicantPosition($id)
+    {
+       return $this->repository->getSinglePosition($id);
     }
 }
