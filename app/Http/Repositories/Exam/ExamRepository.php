@@ -140,7 +140,6 @@ class ExamRepository implements ExamRepositoryInterface
       foreach($exams as $exam)
       {
           $question = Question::where('exam_id', $exam->id)->first();
-          log::info($question);
           if(!$question) { 
                $exam->setAttribute('hasTaken', false);
                break;
@@ -150,7 +149,6 @@ class ExamRepository implements ExamRepositoryInterface
                ['applicant_id', $userID],
                ['question_id', $question->id],
           ])->first();
-          log::info($examRecord);
           (!$examRecord) ? $exam->setAttribute('hasTaken', false) : $exam->setAttribute('hasTaken', true);
       }
 
