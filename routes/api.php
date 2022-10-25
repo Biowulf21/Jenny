@@ -38,14 +38,14 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 	//Role-limited routes 
 	Route::group(['middleware' => ['role:admin']], function () {
 		Route::resource('admin', AdminController::class);
-		Route::resource('applicant', ApplicantController::class);
+		Route::resource('applicants', ApplicantController::class);
 		Route::resource('exam', ExamController::class);
 		Route::resource('question', QuestionController::class);
 		Route::resource('position', PositionController::class);
 		Route::get('/paragraphs/{applicantID}/{examID}', [ApplicantQuestionController::class, 'getParagraphQuestions']);
 		Route::post('/check', [ApplicantQuestionController::class, 'adminChecking']);			
 	});
-
+	
 	Route::group(['prefix' => 'applicant', 'middleware' => ['role:applicant']], function() {
 		Route::get('/exams', [ExamController::class, 'getApplicantExams']);
 		Route::get('/exam/{id}', [ExamController::class, 'getSingleApplicantExam']);
