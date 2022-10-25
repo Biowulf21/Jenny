@@ -11,6 +11,8 @@ use App\Exceptions\ValidatorFailedException;
 use App\Models\Exam;
 use App\Models\Position;
 use App\Models\User;
+use App\Models\Question;
+use App\Models\ApplicantQuestion;
 
 class ExamRepository implements ExamRepositoryInterface
 {
@@ -102,6 +104,7 @@ class ExamRepository implements ExamRepositoryInterface
      try { 
           $user = Auth::user();
           $exams = Exam::where('for_position', $user->for_position)->paginate(10);
+          $exams = $this->ifTaken($exams, $user->id);
           $message = ($exams->total() !== 0) ? "Successfully fetched all exams for applicant position" : "There is no existing exam";
 
           return response()->pass($message, $exams);
@@ -118,6 +121,7 @@ class ExamRepository implements ExamRepositoryInterface
           $exam = Exam::findOrFail($id);
 
           if ($user->for_position === $exam->for_position) {
+               $exam = $this->ifTaken(Exam::where('id', $id)->get(), $user->id);
                return response()->pass('Successfully fetched specific exam for applicant', $exam);
           } else {
                return response()->json([
@@ -129,6 +133,28 @@ class ExamRepository implements ExamRepositoryInterface
      } catch (Exception $e) {
           return response()->pass($e->getMessage());   
      }
+   }
+
+   public function ifTaken($exams, $userID)
+   {
+      foreach($exams as $exam)
+      {
+          $question = Question::where('exam_id', $exam->id)->first();
+          log::info($question);
+          if(!$question) { 
+               $exam->setAttribute('hasTaken', false);
+               break;
+          }
+
+          $examRecord = ApplicantQuestion::where([
+               ['applicant_id', $userID],
+               ['question_id', $question->id],
+          ])->first();
+          log::info($examRecord);
+          (!$examRecord) ? $exam->setAttribute('hasTaken', false) : $exam->setAttribute('hasTaken', true);
+      }
+
+      return $exams;
    }
 
 }
