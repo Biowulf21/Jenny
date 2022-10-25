@@ -26,7 +26,7 @@ class PositionRepository implements PositionRepositoryInterface
     public function getSinglePosition(int $id)
     {
           try {
-               $position = Position::findOrFail($id);
+               $position = Position::find($id);
                ($position) ? $message = 'Successfully fetched position' : $message = 'Position does not exists'; 
 
                return response()->pass($message, $position);
