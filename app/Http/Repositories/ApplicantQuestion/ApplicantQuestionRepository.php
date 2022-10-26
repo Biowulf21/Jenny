@@ -105,10 +105,11 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
             $results[] = $score;
             $results[] = $checked;
             $results[] = $unchecked;
+            $results[] = $checked + $unchecked; //total number of items
 
             return response()->pass('Successfully calculated user exam results', $results);
 
-             /* Code for: having accepted bulk answer data at a time */ 
+            /* Code for: having accepted bulk answer data at a time */ 
             // $results = [];
             // $score = $checked = $unchecked = $count = 0;
 
