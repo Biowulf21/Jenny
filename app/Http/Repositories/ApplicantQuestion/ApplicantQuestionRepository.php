@@ -136,56 +136,89 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
         $id = Auth::user()->id;
         $toCreate = [];
         $questionIDs = [];
-        foreach($data as $answer)
+
+        /** Keep all pieces of code under this comment for future use, in case there is a change of mind **/
+
+        /* Code for: accepting single answer data at a time */
+        $toCreate['applicant_id'] = $id; 
+        $toCreate['question_id'] = $data['question_id'];
+        $toCreate['answer'] = $data['answer'];
+        $validated = $this->validateAnswers($toCreate);
+        ApplicantQuestion::create($validated);
+
+        $question = Question::findOrFail($data['question_id']);
+        $applicant_answer = ApplicantQuestion::where([
+            ['applicant_id', $id],
+            ['question_id', $question->id]
+        ])->first();
+
+        if ($question->type !== 'paragraph')
         {
-            $toCreate['applicant_id'] = $id;
-            $toCreate['question_id'] = $answer['question_id'];
-            $toCreate['answer'] = $answer['answer'];
-
-            $questionIDs[] = $answer['question_id'];
-
-            $validated = $this->validateAnswers($toCreate);
-
-            ApplicantQuestion::create($validated);
-        }
-
-        // Checking for correctness 
-        $results = [
-            'score' => 0, 
-            'checked' => 0,
-            'unchecked' => 0,
-        ];
-        foreach($questionIDs as $questionID) 
-        {
-            $question = Question::findOrFail($questionID);
-            $applicant_answer = ApplicantQuestion::where([
-                ['applicant_id', $id], 
-                ['question_id', $questionID],
-                ])->first();
-
-            if ($question->type !== 'paragraph')
+            if($applicant_answer->answer === $question->answer)
             {
-                if($applicant_answer->answer === $question->answer)
-                {
-                    $applicant_answer->isChecked = true;
-                    $applicant_answer->isCorrect = true;
-                    $applicant_answer->save();
-
-                    $results['score'] = $results['score']+1;
-                    $results['checked'] = $results['checked']+1;
-                } else {
-                    $applicant_answer->isChecked = true;
-                    $applicant_answer->isCorrect = false;
-                    $applicant_answer->save();
-
-                    $results['checked'] = $results['checked']+1;
-                }
+                $applicant_answer->isChecked = true;
+                $applicant_answer->isCorrect = true;
+                $applicant_answer->save();
             } else {
-                $results['unchecked'] = $results['unchecked']+1;
+                $applicant_answer->isChecked = true;
+                $applicant_answer->isCorrect = false;
+                $applicant_answer->save();
             }
-        }
+        } 
 
-        return response()->pass('Successfully calculated exam results', $results);
+        return response()->pass('Successfully created and recorded applicant answer for question #'. $data['question_id'], []);
+
+        /* Code for: accepting bulk answers data at a time*/
+        // foreach($data as $answer)
+        // {
+        //     $toCreate['applicant_id'] = $id;
+        //     $toCreate['question_id'] = $answer['question_id'];
+        //     $toCreate['answer'] = $answer['answer'];
+
+        //     $questionIDs[] = $answer['question_id'];
+
+        //     $validated = $this->validateAnswers($toCreate);
+
+        //     ApplicantQuestion::create($validated);
+        // }
+
+        // // Checking for correctness 
+        // $results = [
+        //     'score' => 0, 
+        //     'checked' => 0,
+        //     'unchecked' => 0,
+        // ];
+        // foreach($questionIDs as $questionID) 
+        // {
+        //     $question = Question::findOrFail($questionID);
+        //     $applicant_answer = ApplicantQuestion::where([
+        //         ['applicant_id', $id], 
+        //         ['question_id', $questionID],
+        //         ])->first();
+
+        //     if ($question->type !== 'paragraph')
+        //     {
+        //         if($applicant_answer->answer === $question->answer)
+        //         {
+        //             $applicant_answer->isChecked = true;
+        //             $applicant_answer->isCorrect = true;
+        //             $applicant_answer->save();
+
+        //             $results['score'] = $results['score']+1;
+        //             $results['checked'] = $results['checked']+1;
+        //         } else {
+        //             $applicant_answer->isChecked = true;
+        //             $applicant_answer->isCorrect = false;
+        //             $applicant_answer->save();
+
+        //             $results['checked'] = $results['checked']+1;
+        //         }
+        //     } else {
+        //         $results['unchecked'] = $results['unchecked']+1;
+        //     }
+        // }
+
+        // return response()->pass('Successfully calculated exam results', $results);
     }
 
     private function validateAnswers(array $data)
