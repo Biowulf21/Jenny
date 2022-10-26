@@ -52,6 +52,9 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
     public function getExamResults(int $applicantID, int $examID)
     {
         try {
+             /** Keep all pieces of code under this comment for future use, in case there is a change of mind **/
+
+            /* Code for: having accepted single answer data at a time */ 
             $results = [];
             $score = $checked = $unchecked = $count = 0;
 
@@ -73,39 +76,93 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                 ], 502);
             }
 
-            $applicantExam = ApplicantQuestion::where([ 
-                ['applicant_id', $applicantID], 
-                ['question_id', $questions[0]->id] 
-                ])->first();
-            if(!$applicantExam)
+            foreach ($questions as $question)
             {
-                return response()->json([
-                    'message' => 'This applicant has not taken this exam',
-                    'data' => [],
-                ], 502);
-            }
-
-            foreach($questions as $question) {
-                $results[] = ApplicantQuestion::where([ 
+                $record = ApplicantQuestion::where([ 
                     ['applicant_id', $applicantID], 
                     ['question_id', $question->id] 
-                    ])->first();
+                ])->first();
+                $results[] = $record;
 
-                if ($results[$count]->isChecked)
+                if(!$record)
                 {
-                    ($results[$count]->isCorrect) ? $score++ : $score;
+                    $results[] = $score;
+                    $results[] = $checked;
+                    $results[] = $unchecked;
+
+                    return response()->pass('User has not completed this exam, partial score is as follows', $results);
+                }
+
+                if($record->isChcecked)
+                {
+                    ($record->isCorrent) ? $score++ : $score;
                     $checked++;
                 } else {
                     $unchecked++;
                 }
-
-                $count++;
             }
-            
-            $results[] = $score; 
+
+            $results[] = $score;
             $results[] = $checked;
             $results[] = $unchecked;
-            return response()->pass('Successfully retrieved exam results', $results);
+
+            return response()->pass('Successfully calculated user exam results', $results);
+
+             /* Code for: having accepted bulk answer data at a time */ 
+            // $results = [];
+            // $score = $checked = $unchecked = $count = 0;
+
+            // $examExists = Exam::where('id', $examID)->first();
+            // if(!$examExists)
+            // {
+            //     return response()->json([
+            //         'message' => 'This exam does not exists',
+            //         'data' => [],
+            //     ], 502);
+            // }
+
+            // $questions = Question::where('exam_id', $examID)->get();
+            // if ($questions->isEmpty())
+            // {
+            //     return response()->json([
+            //         'message' => 'This exam does not have questions',
+            //         'data' => [],
+            //     ], 502);
+            // }
+
+            // $applicantExam = ApplicantQuestion::where([ 
+            //     ['applicant_id', $applicantID], 
+            //     ['question_id', $questions[0]->id] 
+            //     ])->first();
+            // if(!$applicantExam)
+            // {
+            //     return response()->json([
+            //         'message' => 'This applicant has not taken this exam',
+            //         'data' => [],
+            //     ], 502);
+            // }
+
+            // foreach($questions as $question) {
+            //     $results[] = ApplicantQuestion::where([ 
+            //         ['applicant_id', $applicantID], 
+            //         ['question_id', $question->id] 
+            //         ])->first();
+
+            //     if ($results[$count]->isChecked)
+            //     {
+            //         ($results[$count]->isCorrect) ? $score++ : $score;
+            //         $checked++;
+            //     } else {
+            //         $unchecked++;
+            //     }
+
+            //     $count++;
+            // }
+            
+            // $results[] = $score; 
+            // $results[] = $checked;
+            // $results[] = $unchecked;
+            // return response()->pass('Successfully retrieved exam results', $results);
         } catch (Exception $e) {
             return response()->pass($e->getMessage());
         }
