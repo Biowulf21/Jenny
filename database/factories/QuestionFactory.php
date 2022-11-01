@@ -20,12 +20,13 @@ class QuestionFactory extends Factory
     public function definition()
     {
         $examID = Exam::inRandomOrder()->first()->id;
-        
-        return [
-            'exam_id' => $examID,
-            'type' => $this->faker->randomElement(['radio', 'single', 'paragraph']),
-            'problem' => $this->faker->paragraph(),
-            'options' => [
+        $type = $this->faker->randomElement(['radio', 'single', 'paragraph']);
+
+        $options = null;
+        $answer = null;
+        if($type === 'radio')
+        {
+            $options = [
                 [   
                     'key' => 'A',
                     'value' => $this->faker->paragraph,
@@ -42,8 +43,20 @@ class QuestionFactory extends Factory
                     'key' => 'D',
                     'value' => $this->faker->paragraph,
                 ],
-            ],
-            'answer' => $this->faker->randomElement(['A', 'B', 'C', 'D']),
+            ];
+
+            $answer = $this->faker->randomElement(['A', 'B', 'C', 'D']);
+        } elseif ($type === 'single') 
+        {
+            $answer = 'Answer';
+        }
+
+        return [
+            'exam_id' => $examID,
+            'type' => $type,
+            'problem' => $this->faker->paragraph(),
+            'options' => $options,
+            'answer' => $answer,
         ];
     }
 }
