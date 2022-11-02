@@ -204,6 +204,14 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
         $toCreate = [];
         $questionIDs = [];
 
+        $recordExists = $this->recordExists($data['question_id'], $id);
+        if($recordExists){
+            return response()->json([
+                        'message' => 'Applicant has answered this question',
+                        'data' => [],
+                    ], 502);
+        }
+
         /** Keep all pieces of code under this comment for future use, in case there is a change of mind **/
 
         /* Code for: accepting single answer data at a time */
@@ -287,6 +295,17 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
         // }
 
         // return response()->pass('Successfully calculated exam results', $results);
+    }
+
+    private function recordExists(int $questionID, int $applicantID)
+    {
+        $record = ApplicantQuestion::where([
+            ['applicant_id', $applicantID],
+            ['question_id', $questionID]
+        ])->first();
+
+        $exists = ($record) ? true : false; 
+        return $exists;
     }
 
     private function validateAnswers(array $data)
