@@ -286,7 +286,6 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                 [
                     'applicant_id' => 'required', 
                     'question_id' => 'required',
-                    'answer' => 'required',
                 ]
             );
            
