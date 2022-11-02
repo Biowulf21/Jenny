@@ -9,7 +9,6 @@ use App\Models\User;
 
 class AdminRepository implements AdminRepositoryInterface
 {
-
    public function createAdminUser(array $data)
    {
     $user = new UserRepository; 
