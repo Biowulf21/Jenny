@@ -11,7 +11,7 @@ class ApplicantRepository implements ApplicantRepositoryInterface
 {
   public function showAllApplicants()
   {
-    $applicants = User::where('role', 'applicant');
+    $applicants = User::where('role', 'applicant')->get();
     return response()->pass('Successfully fetched all applicants', $applicants);   
   }
 
