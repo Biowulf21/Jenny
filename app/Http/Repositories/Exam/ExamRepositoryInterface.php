@@ -13,6 +13,7 @@ interface ExamRepositoryInterface {
     public function deleteExam(int $id);
     public function editExam(array $data, int $id);
     public function showAllExams();
+    public function showAllExamResults(int $examID);
     public function showSingleExam(int $id);
 
     // Applicant-side

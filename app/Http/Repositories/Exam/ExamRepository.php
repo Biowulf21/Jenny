@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 use App\Exceptions\ValidatorFailedException;
+use App\Http\Repositories\ApplicantQuestion\ApplicantQuestionRepository;
 use App\Models\Exam;
 use App\Models\Position;
 use App\Models\User;
@@ -67,6 +68,43 @@ class ExamRepository implements ExamRepositoryInterface
           return response()->pass($e->getMessage());
      }
 
+   }
+
+   public function showAllExamResults(int $examID)
+   {
+     try {
+          $exam = Exam::findOrFail($examID);
+          $applicants = User::where('for_position', $exam->for_position)->get();
+
+          $results = [];
+          $count = 0;
+          foreach ($applicants as $applicant) {
+               $status = $this->ifTaken(Exam::where('id', $exam->id)->get(), $applicant->id);
+               if($status[0]->hasTaken === false) 
+               {
+                    continue;
+               }
+
+               $questions = Question::where('exam_id', $examID)->get();
+
+               $aqRepository = new ApplicantQuestionRepository;
+               $applicantScore = $aqRepository->calculateExamResults($questions, $applicant->id);
+               log::info($applicantScore);
+               $results[$count] = [
+                    'applicant' => User::find($applicant->id),
+                    'score' => $applicantScore['score'],
+                    'checked' => $applicantScore['checked'],
+                    'unchecked' => $applicantScore['unchecked'],
+                    'total' => $applicantScore['total'],
+               ];
+          }
+
+          $message = (count($results) > 0) ? 'Successfully fetched all results for exam' : 'No applicant has taken this exam';
+
+          return response()->pass($message, $results);
+     } catch (Exception $e) {
+          return response()->pass($e->getMessage());
+     }
    }
 
    public function showSingleExam(int $id)

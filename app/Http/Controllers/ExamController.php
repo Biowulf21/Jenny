@@ -19,6 +19,11 @@ class ExamController extends Controller
         return $this->repository->showAllExams();
     }
 
+    public function showAllExamResults($id)
+    {
+        return $this->repository->showAllExamResults($id);
+    }
+
     public function getApplicantExams()
     {
         return $this->repository->showApplicantExams();

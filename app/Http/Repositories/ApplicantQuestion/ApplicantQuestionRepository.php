@@ -49,32 +49,40 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
         } 
     }
 
-    public function getExamResults(int $applicantID, int $examID)
+    public function fetchExamResults(int $applicantID, int $examID)
+    {
+        $examExists = Exam::where('id', $examID)->first();
+        if(!$examExists)
+        {
+            return response()->json([
+                'message' => 'This exam does not exists',
+                'data' => [],
+            ], 502);
+        }
+
+        $questions = Question::where('exam_id', $examID)->get();
+        if ($questions->isEmpty())
+        {
+            return response()->json([
+                'message' => 'This exam does not have questions',
+                'data' => [],
+            ], 502);
+        }
+
+        $results = $this->calculateExamResults($questions, $applicantID);
+        $message = ($results['total'] === 0) ? 'Applicant has not finished the exam, partial score is as follows' : 'Successfully calculated exam results';
+
+        return response()->pass($message, $results);
+    }
+
+    public function calculateExamResults($questions, $applicantID)
     {
         try {
              /** Keep all pieces of code under this comment for future use, in case there is a change of mind **/
 
             /* Code for: having accepted single answer data at a time */ 
             $results = [];
-            $score = $checked = $unchecked = $count = 0;
-
-            $examExists = Exam::where('id', $examID)->first();
-            if(!$examExists)
-            {
-                return response()->json([
-                    'message' => 'This exam does not exists',
-                    'data' => [],
-                ], 502);
-            }
-
-            $questions = Question::where('exam_id', $examID)->get();
-            if ($questions->isEmpty())
-            {
-                return response()->json([
-                    'message' => 'This exam does not have questions',
-                    'data' => [],
-                ], 502);
-            }
+            $score = $checked = $unchecked = $count = 0;            
 
             foreach ($questions as $question)
             {
@@ -86,11 +94,12 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
 
                 if(!$record)
                 {
-                    $results[] = $score;
-                    $results[] = $checked;
-                    $results[] = $unchecked;
+                    $results['score'] = $score;
+                    $results['checked'] = $checked;
+                    $results['unchecked'] = $unchecked;
+                    $results['total'] = 0;
 
-                    return response()->pass('User has not completed this exam, partial score is as follows', $results);
+                    return $results;
                 }
 
                 if($record->isChcecked)
@@ -102,12 +111,12 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                 }
             }
 
-            $results[] = $score;
-            $results[] = $checked;
-            $results[] = $unchecked;
-            $results[] = $checked + $unchecked; //total number of items
+            $results['score'] = $score;
+            $results['checked'] = $checked;
+            $results['unchecked'] = $unchecked;
+            $results['total'] = $checked + $unchecked; 
 
-            return response()->pass('Successfully calculated user exam results', $results);
+            return $results;
 
             /* Code for: having accepted bulk answer data at a time */ 
             // $results = [];
@@ -165,7 +174,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
             // $results[] = $unchecked;
             // return response()->pass('Successfully retrieved exam results', $results);
         } catch (Exception $e) {
-            return response()->pass($e->getMessage());
+            return $results = [];
         }
 
     }
@@ -202,6 +211,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
         $toCreate['question_id'] = $data['question_id'];
         $toCreate['answer'] = $data['answer'];
         $validated = $this->validateAnswers($toCreate);
+        $validated['answer'] = ($validated['answer'] === null) ? " " : $validated['answer'];
         ApplicantQuestion::create($validated);
 
         $question = Question::findOrFail($data['question_id']);
@@ -286,6 +296,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                 [
                     'applicant_id' => 'required', 
                     'question_id' => 'required',
+                    'answer' => 'nullable',
                 ]
             );
            

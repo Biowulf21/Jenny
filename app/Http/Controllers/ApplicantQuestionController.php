@@ -15,9 +15,9 @@ class ApplicantQuestionController extends Controller
         $this->repository = $repository;
     }
 
-    public function getExamResults(int $applicantID, int $examID)
+    public function fetchExamResults(int $applicantID, int $examID)
     {
-        return $this->repository->getExamResults($applicantID, $examID);
+        return $this->repository->fetchExamResults($applicantID, $examID);
     }
     
     public function adminChecking(Request $request)
