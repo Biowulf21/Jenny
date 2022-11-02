@@ -23,7 +23,7 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'password' => Hash::make('Password21!'), // password
+            'password' => Hash::make('Password21!'), 
             'role' => $role,
             'for_position' => $positionID,
             'email_verified_at' => now(),
@@ -37,7 +37,7 @@ class UserFactory extends Factory
             return [
                 'name' => $this->faker->name(),
                 'email' => $this->faker->unique()->safeEmail(),
-                'password' => Hash::make('Password21!'), // password
+                'password' => Hash::make('Password21!'), 
                 'role' => 'admin',
                 'for_position' => null,
                 'email_verified_at' => now(),
@@ -54,7 +54,7 @@ class UserFactory extends Factory
             return [
                 'name' => $this->faker->name(),
                 'email' => $this->faker->unique()->safeEmail(),
-                'password' => Hash::make('Password21!'), // password
+                'password' => Hash::make('Password21!'), 
                 'role' => 'applicant',
                 'for_position' => $positionID,
                 'email_verified_at' => now(),
