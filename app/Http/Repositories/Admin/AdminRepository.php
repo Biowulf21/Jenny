@@ -12,13 +12,13 @@ class AdminRepository implements AdminRepositoryInterface
 
    public function createAdminUser(array $data)
    {
-       $user = new UserRepository; 
-       return $user->createUser($data, 'admin');
+    $user = new UserRepository; 
+    return $user->createUser($data, 'admin');
    }
 
    public function showAllAdmins()
    {
-    $admins = User::where('role', 'admin');
+    $admins = User::where('role', 'admin')->get();
     return response()->pass('Successfully fetched all admins', $admins);   
    }
 
