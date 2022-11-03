@@ -90,8 +90,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                     ['applicant_id', $applicantID], 
                     ['question_id', $question->id] 
                 ])->first();
-                $results[] = $record;
-
+                
                 if(!$record)
                 {
                     $results['score'] = $score;
@@ -103,10 +102,11 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                 }
 
                 $record->setAttribute('answer_key', $question->answer);
+                $results[] = $record;
 
-                if($record->isChcecked)
+                if($record->isChecked)
                 {
-                    ($record->isCorrent) ? $score++ : $score;
+                    ($record->isCorrect) ? $score++ : $score;
                     $checked++;
                 } else {
                     $unchecked++;
