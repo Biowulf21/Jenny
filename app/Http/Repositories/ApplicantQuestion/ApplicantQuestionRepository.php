@@ -90,7 +90,6 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                     ['applicant_id', $applicantID], 
                     ['question_id', $question->id] 
                 ])->first();
-                $record->setAttribute('answer_key', $question->answer);
                 $results[] = $record;
 
                 if(!$record)
@@ -102,6 +101,8 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
 
                     return $results;
                 }
+
+                $record->setAttribute('answer_key', $question->answer);
 
                 if($record->isChcecked)
                 {
