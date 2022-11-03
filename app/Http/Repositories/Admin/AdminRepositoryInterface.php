@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 interface AdminRepositoryInterface {
     public function createAdminUser(array $data);
-    public function showAllAdmins();
-    public function showOneAdmin(int $id);
+    public function getAllAdmins();
+    public function getSingleAdmin(int $id);
 
 }

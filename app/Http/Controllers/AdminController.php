@@ -24,7 +24,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return $this->repository->showAllAdmins();
+        return $this->repository->getAllAdmins();
     }
 
     /**
@@ -56,7 +56,7 @@ class AdminController extends Controller
      */
     public function show($id)
     {
-        return $this->repository->showOneAdmin($id);
+        return $this->repository->getSingleAdmin($id);
     }
 
     /**
