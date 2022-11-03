@@ -32,7 +32,7 @@ Route::controller(UserController::class)->group(function() {
 Route::group(['middleware' => ['auth:sanctum']], function (){
 
 	//Shared routes
-	Route::get('/results/{applicantID}/{examID}', [ApplicantQuestionController::class, 'getExamResults']);
+	Route::get('/results/{applicantID}/{examID}', [ApplicantQuestionController::class, 'fetchExamResults']);
 	Route::get('{exam_id}/question/all', [QuestionController::class, 'showQuestionByExam']);	
 
 	//Role-limited routes 
