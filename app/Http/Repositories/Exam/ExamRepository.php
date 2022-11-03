@@ -17,18 +17,11 @@ use App\Models\ApplicantQuestion;
 
 class ExamRepository implements ExamRepositoryInterface
 {
-
    public function createExam(array $data)
    {
-     try {        
-          $validated = $this->validateExam($data);
-          $exam = Exam::create($validated);
-
-          return response()->pass('Successfully created exam', $exam);
-     } catch (Exception $e) {
-          return response()->pass($e->getMessage());
-     }
-       
+     $validated = $this->validateExam($data);
+     $exam = Exam::create($validated);
+     return response()->pass('Successfully created exam', $exam);       
    }
 
    public function deleteExam(int $id)
