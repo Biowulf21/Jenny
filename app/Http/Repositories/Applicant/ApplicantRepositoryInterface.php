@@ -6,6 +6,6 @@ use Illuminate\Http\Request;
 
 interface ApplicantRepositoryInterface 
 {
-    public function showAllApplicants();
-    public function showOneApplicant(int $id);
+    public function getAllApplicants();
+    public function getSingleApplicant(int $id);
 }

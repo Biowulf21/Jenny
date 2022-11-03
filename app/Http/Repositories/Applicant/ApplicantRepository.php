@@ -9,15 +9,18 @@ use App\Models\User;
 
 class ApplicantRepository implements ApplicantRepositoryInterface
 {
-  public function showAllApplicants()
+  public function getAllApplicants()
   {
-    $applicants = User::where('role', 'applicant');
+    $applicants = User::where('role', 'applicant')->get();
     return response()->pass('Successfully fetched all applicants', $applicants);   
   }
 
-  public function showOneApplicant(int $id)
+  public function getSingleApplicant(int $id)
   {
-    $applicant = User::findOrFail($id);
+    $applicant = User::where([
+        ['id', $id],
+        ['role', 'applicant']
+      ])->firstOrFail();
     return response()->pass('Successfully fetched one applicant', $applicant);   
   }
 }

@@ -9,22 +9,24 @@ use App\Models\User;
 
 class AdminRepository implements AdminRepositoryInterface
 {
-
    public function createAdminUser(array $data)
    {
-       $user = new UserRepository; 
-       return $user->createUser($data, 'admin');
+      $user = new UserRepository; 
+      return $user->createUser($data, 'admin');
    }
 
-   public function showAllAdmins()
+   public function getAllAdmins()
    {
-    $admins = User::where('role', 'admin');
-    return response()->pass('Successfully fetched all admins', $admins);   
+      $admins = User::where('role', 'admin')->get();
+      return response()->pass('Successfully fetched all admins', $admins);   
    }
 
-   public function showOneAdmin(int $id)
+   public function getSingleAdmin(int $id)
    {
-    $admin = User::findOrFail($id);
-    return response()->pass('Successfully fetched one admin', $admin); 
+      $admin = User::where([
+         ['id', $id], 
+         ['role', 'admin']
+      ])->firstOrFail();
+      return response()->pass('Successfully fetched one admin', $admin); 
    }
 }

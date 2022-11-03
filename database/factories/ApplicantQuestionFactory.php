@@ -19,12 +19,12 @@ class ApplicantQuestionFactory extends Factory
         $user = User::where('role', 'applicant')->inRandomOrder()->first();
 
         $exam = Exam::where('for_position', $user->for_position)->inRandomOrder()->first();
-        if(!$exam){ 
+        if(!$exam) { 
             $exam = Exam::factory()->state(['for_position' => $user->for_position],)->create();
         } 
 
         $question = Question::where('exam_id', $exam->id)->inRandomOrder()->first();
-        if(!$question){ 
+        if(!$question) { 
             $question = Question::factory()->state(['exam_id' => $exam->id],)->create();
         }
 

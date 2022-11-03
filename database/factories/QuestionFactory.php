@@ -24,8 +24,7 @@ class QuestionFactory extends Factory
 
         $options = null;
         $answer = null;
-        if($type === 'radio')
-        {
+        if($type === 'radio') {
             $options = [
                 [   
                     'key' => 'A',
@@ -46,8 +45,8 @@ class QuestionFactory extends Factory
             ];
 
             $answer = $this->faker->randomElement(['A', 'B', 'C', 'D']);
-        } elseif ($type === 'single') 
-        {
+
+        } elseif ($type === 'single') {
             $answer = 'Answer';
         }
 
