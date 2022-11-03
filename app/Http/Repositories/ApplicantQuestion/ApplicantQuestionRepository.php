@@ -81,6 +81,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
              /** Keep all pieces of code under this comment for future use, in case there is a change of mind **/
 
             /* Code for: having accepted single answer data at a time */ 
+            $records = [];
             $results = [];
             $score = $checked = $unchecked = $count = 0;            
 
@@ -90,10 +91,10 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                     ['applicant_id', $applicantID], 
                     ['question_id', $question->id] 
                 ])->first();
-                $results[] = $record;
-
+                
                 if(!$record)
                 {
+                    $results['records'] = $records;
                     $results['score'] = $score;
                     $results['checked'] = $checked;
                     $results['unchecked'] = $unchecked;
@@ -102,17 +103,20 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                     return $results;
                 }
 
-                $record->setAttribute('answer_key', $question->answer);
+                $record->setAttribute('question_problem', $question->problem);
+                $record->setAttribute('question_key', $question->answer);
+                $records[] = $record;
 
-                if($record->isChcecked)
+                if($record->isChecked)
                 {
-                    ($record->isCorrent) ? $score++ : $score;
+                    ($record->isCorrect) ? $score++ : $score;
                     $checked++;
                 } else {
                     $unchecked++;
                 }
             }
 
+            $results['records'] = $records;
             $results['score'] = $score;
             $results['checked'] = $checked;
             $results['unchecked'] = $unchecked;
