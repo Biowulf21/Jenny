@@ -9,92 +9,60 @@ use Illuminate\Support\Facades\Validator;
 use App\Exceptions\ValidatorFailedException;
 use App\Models\Question;
 use App\Models\Exam;
+use App\Models\ApplicantQuestion;
 
 class QuestionRepository implements QuestionRepositoryInterface
 {
     public function createQuestion(array $data)
     {
-        try {
-            $validated = $this->validateQuestion($data);
-            $question = Question::create($validated);
-            return response()->pass('Successfully created question', $question);
-        } catch (Exception $e) {
-            return response()->pass($e->getMessage());
-        }
-        
+        $validated = $this->validateQuestion($data);
+        $question = Question::create($validated);
+        return response()->pass('Successfully created question', $question);
     }
 
     public function editQuestion(array $data, int $id)
     {
-        try {
-            $validator = [];
-            $keys = ['exam_id', 'type', 'problem', 'options', 'answer'];
-            foreach($keys as $key) {
-                (array_key_exists($key, $data)) ? $validator[$key] = $data[$key] : $validator[$key] = NULL;
-            }
-    
-            $validated = $this->validateQuestion($validator);
-            Question::where('id', $id)->update($validated);
-            $question = Question::find($id);
-    
-            return response()->pass('Successfully edited question ' . $id, $question);
+        $question = Question::findOrFail($id);
 
-        } catch (Exception $e) {
-            return response()->pass($e->getMessage());
+        $validator = [];
+        $keys = ['exam_id', 'type', 'problem', 'options', 'answer'];
+        foreach($keys as $key) {
+            (array_key_exists($key, $data)) ? $validator[$key] = $data[$key] : $validator[$key] = NULL;
         }
-       
+
+        $validated = $this->validateQuestion($validator);
+        Question::where('id', $id)->update($validated);
+
+        $question = Question::find($id);
+        return response()->pass('Successfully edited question ' . $id, $question);       
     }
 
     public function deleteQuestion(int $id)
     {
-        try {
-            Question::findOrFail($id)->delete();
-  
-            return response()->pass('Successfully deleted question');
-       } catch (Exception $e) {
-            return response()->pass($e->getMessage());
-       }
-       
+        Question::findOrFail($id)->delete();  
+
+        $deletedApplicantQuestions = ApplicantQuestion::where('question_id', $id)->delete();
+        return response()->pass('Successfully deleted question', $deletedApplicantQuestions);       
     }
 
-    public function showAllQuestions(int $exam_id)
+    public function getAllQuestions(int $examID)
     {
-        try { 
-            if(Exam::find($exam_id)){
-                $questions = Question::where('exam_id', $exam_id)->orderBy('created_at', 'asc')->get();
-                $message = (!empty($questions)) ? "Successfully fetched all questions in exam " . $exam_id : "There is no existing question in exam " . $exam_id;
-    
-                return response()->pass($message, $questions);
-            } else {
-                return response()->json([
-                    'message' => 'Exam ID does not exist and Exam is not found',
-                    'data' => [],
-                ], 404);
-            }           
+        Exam::findOrFail($examID);
 
-        } catch (Exception $e) {
-            return response()->pass($e->getMessage());
-       }
-
+        $questions = Question::where('exam_id', $examID)->orderBy('created_at', 'asc')->get();
+        $message = (!$questions->isEmpty()) ? "Successfully fetched all questions in exam " . $examID : "There is no existing question in exam " . $examID;
+        return response()->pass($message, $questions);
     }
  
-    public function showSingleQuestion(int $id)
+    public function getSingleQuestion(int $id)
     {
-        try { 
-            $question = Question::where('id', $id)->firstOrFail();
-
-            return response()->pass('Successfully fetched question ' . $id, $question);
-        } catch (Exception $e) {
-            log::info($e->getMessage);
-            return response()->pass($e->getMessage());
-       }
-
+        $question = Question::findOrFail($id);
+        return response()->pass('Successfully fetched question ' . $id, $question);
     }
 
     private function validateQuestion(array $data)
     {
-        $validator = Validator::make($data, 
-            [
+        $validator = Validator::make($data, [
                 'exam_id' => 'required', 
                 'type' => 'required|in:radio,single,paragraph',
                 'problem' => 'required',
@@ -103,8 +71,7 @@ class QuestionRepository implements QuestionRepositoryInterface
             ], 
         );
 
-        if($validator->fails())
-        {
+        if($validator->fails()) {
             $error_message = $validator->errors()->all();
             throw new ValidatorFailedException($error_message[0], $validator->errors());
         }

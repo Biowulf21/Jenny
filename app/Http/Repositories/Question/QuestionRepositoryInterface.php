@@ -12,6 +12,6 @@ interface QuestionRepositoryInterface
     public function createQuestion(array $data);
     public function editQuestion(array $data, int $id);
     public function deleteQuestion(int $id);
-    public function showAllQuestions(int $exam_id);
-    public function showSingleQuestion(int $id);
+    public function getAllQuestions(int $exam_id);
+    public function getSingleQuestion(int $id);
 }
