@@ -48,14 +48,14 @@ class QuestionController extends Controller
 
     
      /**
-     * Display a listing of the resource, grouped by their exam_id foreign key
+     * Display a listing of the resource, grouped by their examID foreign key
      * 
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showQuestionByExam(int $exam_id)
+    public function getQuestionByExam(int $examID)
     {
-        return $this->repository->showAllQuestions($exam_id);
+        return $this->repository->getAllQuestions($examID);
     }
 
     /**
@@ -66,7 +66,7 @@ class QuestionController extends Controller
      */
     public function show($id)
     {
-        return $this->repository->showSingleQuestion($id);
+        return $this->repository->getSingleQuestion($id);
     }
 
     /**
