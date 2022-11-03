@@ -35,7 +35,7 @@ class PositionRepository implements PositionRepositoryInterface
     {
           $validated = $this->validatePosition($data);
           Position::where('id', $id)->update($validated);
-          $position = Position::find($id);                    
+          $position = Position::findOrFail($id);                    
           return response()->pass('Successfully edited position', $position);
     }
 
