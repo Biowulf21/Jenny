@@ -101,7 +101,8 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                     return $results;
                 }
 
-                $record->setAttribute('answer_key', $question->answer);
+                $record->setAttribute('question_problem', $question->problem);
+                $record->setAttribute('question_key', $question->answer);
                 $results[] = $record;
 
                 if($record->isChecked)
