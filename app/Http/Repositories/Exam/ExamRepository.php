@@ -26,14 +26,25 @@ class ExamRepository implements ExamRepositoryInterface
 
    public function deleteExam(int $id)
    {
-     try {
-          Exam::findOrFail($id)->delete();
+     Exam::findOrFail($id)->delete();
 
-          return response()->pass('Successfully deleted exam');
-     } catch (Exception $e) {
-          return response()->pass($e->getMessage());
+     $results = []; 
+     $deletedApplicantQuestions = 0;
+     $deletedQuestions = 0;
+
+     $questions = Question::where('exam_id', $id)->get();
+     if(!$questions->isEmpty()) {               
+          foreach($questions as $question) {
+               $deletedApplicantQuestions += ApplicantQuestion::where('question_id', $question->id)->delete();
+          }
+
+          $deletedQuestions = Question::where('exam_id', $id)->delete();
      }
-
+     
+     $results['applicant_questions'] = $deletedApplicantQuestions;
+     $results['questions'] = $deletedQuestions;
+     
+     return response()->pass('Successfully deleted exam', $results);
    }
 
    public function editExam(array $data, int $id)
