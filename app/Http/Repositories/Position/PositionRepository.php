@@ -14,84 +14,55 @@ class PositionRepository implements PositionRepositoryInterface
 {
     public function getAllPositions()
     {
-          try {   
-               $positions = Position::all();
-               
-               return response()->pass('Successfully fetched all positions', $positions);
-          } catch (Exception $e) {
-               return response()->pass($e->getMessage());
-          }
+          $positions = Position::all();               
+          return response()->pass('Successfully fetched all positions', $positions);
     }
 
     public function getSinglePosition(int $id)
     {
-          try {
-               $position = Position::find($id);
-               ($position) ? $message = 'Successfully fetched position' : $message = 'Position does not exists'; 
-
-               return response()->pass($message, $position);
-          } catch (Exception $e) {
-               return response()->pass($e->getMessage());
-          }
+          $position = Position::findOrFail($id);
+          return response()->pass('Successfully fetched position', $position);
     }
 
     public function createPosition(array $data)
     {
-          try {   
-               $validated = $this->validatePosition($data);
-               $position = Position::create($validated);
-                    
-               return response()->pass('Successfully created position', $position);
-          } catch (Exception $e) {
-               return response()->pass($e->getMessage());
-          }
+          $validated = $this->validatePosition($data);
+          $position = Position::create($validated);                    
+          return response()->pass('Successfully created position', $position);
     }
 
     public function editPosition(array $data, int $id)
     {
-          try {   
-               $validated = $this->validatePosition($data);
-               Position::where('id', $id)->update($validated);
-               $position = Position::find($id);
-                    
-               return response()->pass('Successfully edited position', $position);
-          } catch (Exception $e) {
-               return response()->pass($e->getMessage());
-          }
+          $validated = $this->validatePosition($data);
+          Position::where('id', $id)->update($validated);
+          $position = Position::find($id);                    
+          return response()->pass('Successfully edited position', $position);
     }
 
     public function deletePosition(int $id)
     {
-          try {
-               $applicantsWith = User::where('for_position', $id)->count(); 
-               $examsWith = Exam::where('for_position', $id)->count();
+          $applicantsWith = User::where('for_position', $id)->count(); 
+          $examsWith = Exam::where('for_position', $id)->count();
 
-               if ($applicantsWith + $examsWith === 0)
-               {
-                    Position::findOrFail($id)->delete();
-                    return response()->pass('Successfully deleted position');
-               } else {
-                    return response()->json([
-                         'message' => 'Unable to delete position because an applicant or exam is using this reference',
-                         'data' => null,
-                     ], 502);
-               }
-               
-          } catch (Exception $e) {
-               return response()->pass($e->getMessage());
+          if ($applicantsWith + $examsWith === 0) {
+               Position::findOrFail($id)->delete();
+               return response()->pass('Successfully deleted position', []);
+          } else {
+               return response()->json([
+                    'message' => 'Unable to delete position because an applicant or exam is using this reference',
+                    'data' => null,
+                    ], 502);
           }
     }
 
     private function validatePosition(array $data)
     {
-          $validator = Validator::make($data, 
-          [
+          $validator = Validator::make($data, [
                'name' => 'required|string|unique:positions,name'
           ], 
           );
 
-          if($validator->fails())
-          {
+          if($validator->fails()) {
                $error_message = $validator->errors()->all();
                throw new ValidatorFailedException($error_message[0], $validator->errors());
           }
