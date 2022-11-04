@@ -19,7 +19,11 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
     public function getParagraphQuestions(int $applicantID, int $examID)
     {
         Exam::findOrFail($examID);
-
+        User::where([
+            ['id', $applicantID],
+            ['role', 'applicant']
+        ])->firstOrFail();
+        
         $data = []; 
 
         $paragraphQuestions = Question::where([
