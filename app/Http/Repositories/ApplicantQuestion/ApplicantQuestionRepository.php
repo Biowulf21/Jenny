@@ -11,58 +11,59 @@ use App\Exceptions\ValidatorFailedException;
 use App\Models\ApplicantQuestion;
 use App\Models\Question;
 use App\Models\Exam;
+use App\Models\User;
 
 class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterface
 {
 
     public function getParagraphQuestions(int $applicantID, int $examID)
     {
-        try {
-            $data = []; 
+        Exam::findOrFail($examID);
 
-            $paragraphQuestions = Question::where([
-                ['exam_id', $examID],
-                ['type', 'paragraph']
-            ])->get();
-            if ($paragraphQuestions->isEmpty())
-            {
-                return response()->json([
-                    'message' => 'Exam does not have a paragraph-type question',
-                    'data' => [],
-                ], 502);
-            }
+        $data = []; 
 
-            $data['questions'] = $paragraphQuestions;
+        $paragraphQuestions = Question::where([
+            ['exam_id', $examID],
+            ['type', 'paragraph']
+        ])->get();
+        if ($paragraphQuestions->isEmpty()) {
+            return response()->json([
+                'message' => 'Exam does not have a paragraph-type question',
+                'data' => [],
+            ], 502);
+        }
 
-            $answers = [];
-            foreach($paragraphQuestions as $paragraphQuestion) {
-                $answers[] = ApplicantQuestion::where([
-                        ['applicant_id', $applicantID],
-                        ['question_id', $paragraphQuestion->id],
-                ])->first();
-            }
-            $data['answers'] = $answers;
+        $data['questions'] = $paragraphQuestions;
 
-            return response()->pass('Successfully retrieved questions with type paragraph', $data);
-        } catch (Exception $e) {
-            return response()->pass($e->getMessage());
-        } 
+        $answers = [];
+        foreach($paragraphQuestions as $paragraphQuestion) {
+            $answers[] = ApplicantQuestion::where([
+                ['applicant_id', $applicantID],
+                ['question_id', $paragraphQuestion->id],
+            ])->first();
+        }
+
+        $data['answers'] = $answers;
+        return response()->pass('Successfully retrieved questions with type paragraph', $data);
     }
 
     public function fetchExamResults(int $applicantID, int $examID)
     {
-        $examExists = Exam::where('id', $examID)->first();
-        if(!$examExists)
-        {
+        $exam = Exam::findOrFail($examID);
+        $applicant = User::where([
+            ['id', $applicantID],
+            ['role', 'applicant'],
+        ])->firstOrFail();
+
+        if($applicant->for_position !== $exam->for_position) {
             return response()->json([
-                'message' => 'This exam does not exists',
+                'message' => 'This exam is not for applicant position',
                 'data' => [],
             ], 502);
         }
 
         $questions = Question::where('exam_id', $examID)->get();
-        if ($questions->isEmpty())
-        {
+        if ($questions->isEmpty()) {
             return response()->json([
                 'message' => 'This exam does not have questions',
                 'data' => [],
@@ -92,8 +93,7 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                     ['question_id', $question->id] 
                 ])->first();
                 
-                if(!$record)
-                {
+                if(!$record) {
                     $results['records'] = $records;
                     $results['score'] = $score;
                     $results['checked'] = $checked;
@@ -103,12 +103,13 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
                     return $results;
                 }
 
+                $record->setAttribute('question_type', $question->type);
+                ($record->question_type === 'radio') ? $record->setAttribute('question_options', $question->options) : " ";
                 $record->setAttribute('question_problem', $question->problem);
                 $record->setAttribute('question_key', $question->answer);
                 $records[] = $record;
 
-                if($record->isChecked)
-                {
+                if($record->isChecked) {
                     ($record->isCorrect) ? $score++ : $score;
                     $checked++;
                 } else {
@@ -187,35 +188,36 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
 
     public function adminChecking(array $data)
     {
-        try { 
-            foreach($data as $checked) {
-                ApplicantQuestion::where([
-                    ['applicant_id', $checked->applicant_id],
-                    ['question_id', $checked->question_id],
-                ])->update([
-                    'isChecked' => $checked->isChecked,
-                    'isCorrect' => $checked->isCorrect,
-                ]);
-            }
-
-            return response()->pass('Successfully updated applicant answer data', []);
-        } catch (Exception $e) {
-            return response()->pass($e->getMessage());
+        foreach($data as $checked) {
+            $record = ApplicantQuestion::where([
+                ['applicant_id', $checked['applicant_id']],
+                ['question_id', $checked['question_id']],
+            ])->firstOrFail();
+            
+            $record->isChecked = $checked['isChecked']; 
+            $record->isCorrect = $checked['isCorrect'];
+            $record->save();
         }
+
+        return response()->pass('Successfully updated applicant answer data', []);
     }
 
     public function applicantChecking(array $data) 
     {
+        $question = Question::findOrFail($data['question_id']);
         $id = Auth::user()->id;
         $toCreate = [];
         $questionIDs = [];
 
-        $recordExists = $this->recordExists($data['question_id'], $id);
-        if($recordExists){
+        $recordExists = ApplicantQuestion::where([
+            ['applicant_id', $id],
+            ['question_id', $data['question_id']]
+        ])->first();
+        if($recordExists) {
             return response()->json([
-                        'message' => 'Applicant has answered this question',
-                        'data' => [],
-                    ], 502);
+                'message' => 'Applicant has answered this question',
+                'data' => [],
+            ], 502);
         }
 
         /** Keep all pieces of code under this comment for future use, in case there is a change of mind **/
@@ -228,16 +230,13 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
         $validated['answer'] = ($validated['answer'] === null) ? " " : $validated['answer'];
         ApplicantQuestion::create($validated);
 
-        $question = Question::findOrFail($data['question_id']);
         $applicant_answer = ApplicantQuestion::where([
             ['applicant_id', $id],
             ['question_id', $question->id]
         ])->first();
 
-        if ($question->type !== 'paragraph')
-        {
-            if($applicant_answer->answer === $question->answer)
-            {
+        if ($question->type !== 'paragraph') {
+            if($applicant_answer->answer === $question->answer) {
                 $applicant_answer->isChecked = true;
                 $applicant_answer->isCorrect = true;
                 $applicant_answer->save();
@@ -303,30 +302,17 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
         // return response()->pass('Successfully calculated exam results', $results);
     }
 
-    private function recordExists(int $questionID, int $applicantID)
-    {
-        $record = ApplicantQuestion::where([
-            ['applicant_id', $applicantID],
-            ['question_id', $questionID]
-        ])->first();
-
-        $exists = ($record) ? true : false; 
-        return $exists;
-    }
-
     private function validateAnswers(array $data)
     {
         try { 
-            $validator = Validator::make($data, 
-                [
+            $validator = Validator::make($data, [
                     'applicant_id' => 'required', 
                     'question_id' => 'required',
                     'answer' => 'nullable',
                 ]
             );
            
-            if($validator->fails())
-            {
+            if($validator->fails()) {
                 $error_message = $validator->errors()->all();
                 throw new ValidatorFailedException($error_message[0], $validator->errors());
             }
