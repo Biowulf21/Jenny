@@ -37,14 +37,28 @@ class ApplicantQuestionRepository implements ApplicantQuestionRepositoryInterfac
 
         $answers = [];
         foreach($paragraphQuestions as $paragraphQuestion) {
-            $answers[] = ApplicantQuestion::where([
+            $answer = ApplicantQuestion::where([
                 ['applicant_id', $applicantID],
                 ['question_id', $paragraphQuestion->id],
+                ['isChecked', 0]
             ])->first();
+
+            if(!$answer) {
+                continue;
+            } 
+
+            $answers[] = $answer;
         }
 
-        $data['answers'] = $answers;
-        return response()->pass('Successfully retrieved questions with type paragraph', $data);
+        if(!$answers) {
+            $message = "No answers to questions fetched"; 
+            $data = [];
+        } else {
+            $message = "Successfully retrieved questions with type paragraph";
+            $data['answers'] = $answers;
+        }        
+
+        return response()->pass($message, $data);
     }
 
     public function fetchExamResults(int $applicantID, int $examID)
