@@ -102,7 +102,7 @@ class ExamRepository implements ExamRepositoryInterface
 
    public function getSingleExam(int $id)
    {
-     $exam = Exam::where('id', $id)->findOrFail();
+     $exam = Exam::findOrFail($id);
      return response()->pass('Successfully fetched exam ID ' . $id, $exam);
    }
 
