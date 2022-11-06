@@ -15,6 +15,8 @@ class QuestionRepository implements QuestionRepositoryInterface
 {
     public function createQuestion(array $data)
     {
+        Exam::findOrFail($data['exam_id']);
+
         $validated = $this->validateQuestion($data);
         $question = Question::create($validated);
         return response()->pass('Successfully created question', $question);
@@ -22,6 +24,7 @@ class QuestionRepository implements QuestionRepositoryInterface
 
     public function editQuestion(array $data, int $id)
     {
+        Exam::findOrFail($data['exam_id']);
         $question = Question::findOrFail($id);
 
         $validator = [];
