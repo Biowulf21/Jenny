@@ -2,6 +2,8 @@
 
 namespace App\Http\Repositories\User;
 
+use Carbon\Carbon;
+
 use Illuminate\Http\Response; 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -69,6 +71,7 @@ class UserRepository implements UserRepositoryInterface{
 
         $validated['role'] = $role;
         $validated['password'] = Hash::make($validated['password']);
+        $validated['email_verified_at'] = Carbon::now();
 
         $user = User::create($validated);
         ($role === 'applicant') ? $user = new AuthenticatedUser($user, $user->createToken('authToken')->plainTextToken) : $user;
