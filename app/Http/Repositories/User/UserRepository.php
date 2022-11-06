@@ -49,39 +49,37 @@ class UserRepository implements UserRepositoryInterface{
 
     public function createUser(array $data, string $role)
     {
-        try {
-            $validator = Validator::make($data, 
-                [
-                    'name' => 'required|string', 
-                    'email' => 'required|email|unique:users,email',                     
-                    'for_position' => $role === 'applicant' ? 'required' : 'nullable',
-                    'password' => 'required|string|min:8',
-                    'password_confirmation' => 'required|string|same:password',
-                ]
-            );
+        $validator = Validator::make($data, 
+            [
+                'name' => 'required|string', 
+                'email' => 'required|email|unique:users,email',                     
+                'for_position' => $role === 'applicant' ? 'required' : 'nullable',
+                'password' => 'required|string|min:8',
+                'password_confirmation' => 'required|string|same:password',
+            ]
+        );
 
-            if($validator->fails())
-            {
-                $error_message = $validator->errors()->all();
-                throw new ValidatorFailedException($error_message[0], $validator->errors());
-            }
-
-            $validated = $validator->validated();      
-
-            $validated['role'] = $role;
-            $validated['password'] = Hash::make($validated['password']);
-
-            $user = User::create($validated);
-            ($role === 'applicant') ? $user = new AuthenticatedUser($user, $user->createToken('authToken')->plainTextToken) : $user;
-            return response()->pass('Successfully created ' . $role . ' user', $user);
-        } catch (Exception $e) { 
-            return response()->pass($e->getMessage());
+        if($validator->fails())
+        {
+            $error_message = $validator->errors()->all();
+            throw new ValidatorFailedException($error_message[0], $validator->errors());
         }
+
+        $validated = $validator->validated();      
+
+        $validated['role'] = $role;
+        $validated['password'] = Hash::make($validated['password']);
+
+        $user = User::create($validated);
+        ($role === 'applicant') ? $user = new AuthenticatedUser($user, $user->createToken('authToken')->plainTextToken) : $user;
+        return response()->pass('Successfully created ' . $role . ' user', $user);
         
     }
 
     public function createApplicantUser(array $data)
     {
+        Position::findOrFail($data['for_position']);
+        
         return $this->createUser($data, 'applicant');
     }
 }
