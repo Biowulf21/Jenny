@@ -3,7 +3,10 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+
+use App\Models\Position;
 
 class UserFactory extends Factory
 {
@@ -14,13 +17,50 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+        $role = $this->faker->randomElement(['admin', 'applicant']);
+        $positionID = ($role === 'applicant') ? Position::inRandomOrder()->first()->id : null;
+
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
+            'password' => Hash::make('Password21!'), 
+            'role' => $role,
+            'for_position' => $positionID,
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
         ];
+    }
+
+    public function admin()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'name' => $this->faker->name(),
+                'email' => $this->faker->unique()->safeEmail(),
+                'password' => Hash::make('Password21!'), 
+                'role' => 'admin',
+                'for_position' => null,
+                'email_verified_at' => now(),
+                'remember_token' => Str::random(10),
+            ];
+        });
+    }
+
+    public function applicant()
+    {
+        return $this->state(function (array $attributes) {
+            $positionID = Position::inRandomOrder()->first()->id;
+
+            return [
+                'name' => $this->faker->name(),
+                'email' => $this->faker->unique()->safeEmail(),
+                'password' => Hash::make('Password21!'), 
+                'role' => 'applicant',
+                'for_position' => $positionID,
+                'email_verified_at' => now(),
+                'remember_token' => Str::random(10),
+            ];
+        });
     }
 
     /**
